@@ -1,4 +1,4 @@
-import { FaImages, FaUserTie, FaUser } from "react-icons/fa";
+import { FaUserTie, FaUser } from "react-icons/fa";
 import { MdReportProblem } from "react-icons/md";
 import { HiArrowUp, HiArrowDown } from "react-icons/hi";
 
@@ -6,35 +6,36 @@ import Badge from "../ui/badge/Badge";
 
 export default function PhotoMetrics() {
   const metrics = [
-    {
-      title: "Total Photos",
-      value: "12,480",
-      icon: FaImages,
-      trend: "up",
-      percentage: "8.2%",
-    },
-    {
-      title: "Buyer Photos",
-      value: "7,320",
-      icon: FaUser,
-      trend: "up",
-      percentage: "5.4%",
-    },
-    {
-      title: "Seller Photos",
-      value: "5,160",
-      icon: FaUserTie,
-      trend: "down",
-      percentage: "2.1%",
-    },
-    {
-      title: "Reported Photos",
-      value: "184",
-      icon: MdReportProblem,
-      trend: "down",
-      percentage: "12.6%",
-    },
-  ];
+  {
+    title: "Total Users",
+    value: "128,450",
+    icon: FaUser,
+    trend: "up",
+    percentage: "2.1%",
+  },
+  {
+    title: "Personal Users",
+    value: "91,320",
+    icon: FaUser,
+    trend: "up",
+    percentage: "1.4%",
+  },
+  {
+    title: "Business Users",
+    value: "37,130",
+    icon: FaUserTie,
+    trend: "up",
+    percentage: "3.8%",
+  },
+  {
+    title: "Open Reports",
+    value: "184",
+    icon: MdReportProblem,
+    trend: "down",
+    percentage: "6.2%",
+  },
+];
+
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 md:gap-6">

@@ -4,55 +4,40 @@ import { Profile } from "../types/profile.types";
 
 /* ===================== TYPES ===================== */
 
-// Login
 export interface LoginPayload {
     email: string;
     password: string;
 }
-
 export interface LoginApiResponse {
     message: string;
     adminId: string;
 }
-
-// Forgot Password
 export interface ForgotPasswordPayload {
     email: string;
 }
-
 export interface ForgotPasswordApiResponse {
     id: string;
     email: string;
     message: string;
 }
-
-// Verify OTP
 export interface VerifyOtpPayload {
     otp: string;
 }
-
 export interface VerifyOtpApiResponse {
     message: string;
     token: string;
 }
-
-// Reset Password
 export interface ResetPasswordPayload {
     newPassword: string;
     confirmPassword: string;
 }
-
 export interface ResetPasswordApiResponse {
     message: string;
 }
-
-// Logout
 export interface LogoutApiResponse {
     message: string;
 }
-
 /* ===================== API FUNCTIONS ===================== */
-
 //  LOGIN
 export const loginApi = async (
     payload: LoginPayload
@@ -63,7 +48,6 @@ export const loginApi = async (
     );
     return res.data;
 };
-
 //  LOGOUT
 export const logoutApi = async (): Promise<LogoutApiResponse> => {
     const res = await axiosInstance.post<LogoutApiResponse>(
@@ -71,7 +55,6 @@ export const logoutApi = async (): Promise<LogoutApiResponse> => {
     );
     return res.data;
 };
-
 //  FORGOT PASSWORD
 export const forgotPasswordApi = async (
     payload: ForgotPasswordPayload
@@ -82,7 +65,6 @@ export const forgotPasswordApi = async (
     );
     return res.data;
 };
-
 //  VERIFY OTP
 export const verifyOtpApi = async (
     id: string,
@@ -94,7 +76,7 @@ export const verifyOtpApi = async (
     );
     return res.data;
 };
-
+//  LOGIN VERIFY OTP
 export const loginVerifyOtpApi = async (
     id: string,
     payload: VerifyOtpPayload
@@ -105,7 +87,6 @@ export const loginVerifyOtpApi = async (
     );
     return res.data;
 };
-
 //  RESET PASSWORD
 export const resetPasswordApi = async (
     token: string,
@@ -117,14 +98,11 @@ export const resetPasswordApi = async (
     );
     return res.data;
 };
-// api/authapi.ts
-
+//  RESEND OTP
 export const resendOtpApi = async (id: string) => {
     const res = await axiosInstance.post(API_ROUTES.AUTH.RESEND_OTP(id));
     return res.data; // { message }
 };
-
-
 // GET PROFILE
 export const getProfileApi = async (): Promise<Profile> => {
     const res = await axiosInstance.get("/api/admin/profile-details");

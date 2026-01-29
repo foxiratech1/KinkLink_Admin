@@ -15,11 +15,10 @@ export const getInterestListApi = async (): Promise<Interest[]> => {
     const res = await axiosInstance.get<GetInterestListResponse>(
         API_ROUTES.INTERESTS.GET_LIST
     );
-    // Handle different possible response structures
     return res.data.data || res.data.interests || [];
 };
 
-// ➕ ADD INTEREST
+//  ADD INTEREST
 export const addInterestApi = async (
     data: AddInterestRequest
 ): Promise<InterestActionResponse> => {

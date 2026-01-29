@@ -22,7 +22,7 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
     const [profile, setProfile] = useState<Profile | null>(null);
     const [loading, setLoading] = useState(false);
 
-    const { isAuthenticated } = useAppSelector((state) => state.auth); // ✅ reactive
+    const { isAuthenticated } = useAppSelector((state) => state.auth);
 
     const fetchProfile = async () => {
         try {
@@ -48,9 +48,9 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
 
     useEffect(() => {
         if (isAuthenticated) {
-            fetchProfile(); // ✅ runs immediately after login
+            fetchProfile();
         } else {
-            setProfile(null); // optional cleanup on logout
+            setProfile(null);
         }
     }, [isAuthenticated]);
 
