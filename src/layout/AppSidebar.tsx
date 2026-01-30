@@ -59,10 +59,10 @@ const navItems: NavItem[] = [
     icon: <AlertHexaIcon />,
     name: "Moderation",
     subItems: [
-      { name: "Photos & Bios", path: "/moderation/photos-bios", pro: false },
-      { name: "Posts & Forums", path: "/moderation/posts-forums", pro: false },
-      { name: "Flagged Content", path: "/moderation/flagged", pro: false },
-      { name: "Deletion Log", path: "/moderation/deletion-log", pro: false },
+      { name: "Photos & Bios", path: "/coming-soon", pro: false },
+      { name: "Posts & Forums", path: "/coming-soon", pro: false },
+      { name: "Flagged Content", path: "/coming-soon", pro: false },
+      { name: "Deletion Log", path: "/coming-soon", pro: false },
     ],
   },
   {
@@ -70,20 +70,20 @@ const navItems: NavItem[] = [
     name: "Events",
     subItems: [
       // Used ChatIcon as placeholder for Events/Calendar if CalenderIcon is commented out or re-imported
-      { name: "All Events", path: "/events/all", pro: false },
-      { name: "Reports", path: "/events/reports", pro: false },
-      { name: "Cancellations", path: "/events/cancellations", pro: false },
-      { name: "Compliance", path: "/events/compliance", pro: false },
+      { name: "All Events", path: "/coming-soon", pro: false },
+      { name: "Reports", path: "/coming-soon", pro: false },
+      { name: "Cancellations", path: "/coming-soon", pro: false },
+      { name: "Compliance", path: "/coming-soon", pro: false },
     ],
   },
   {
     icon: <ChatIcon />,
     name: "Messages",
     subItems: [
-      { name: "Flagged Messages", path: "/messages/flagged", pro: false },
-      { name: "Alerts", path: "/messages/alerts", pro: false },
-      { name: "Admin Messages", path: "/messages/admin", pro: false },
-      { name: "Broadcasts", path: "/messages/broadcasts", pro: false },
+      { name: "Flagged Messages", path: "/coming-soon", pro: false },
+      { name: "Alerts", path: "/coming-soon", pro: false },
+      { name: "Admin Messages", path: "/coming-soon", pro: false },
+      { name: "Broadcasts", path: "/coming-soon", pro: false },
     ],
   },
   {

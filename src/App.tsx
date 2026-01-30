@@ -25,6 +25,7 @@ import AllUsersPage from "./pages/Users/AllUsersPage";
 import PendingUsersPage from "./pages/Users/PendingUsersPage";
 import UserDetailsPage from "./pages/Users/UserDetailsPage";
 import InterestManagementPage from "./pages/Interests/InterestManagementPage";
+import CommingSoon from "./pages/OtherPage/CommingSoon";
 
 export default function App() {
   return (
@@ -67,6 +68,7 @@ export default function App() {
               {/* Charts */}
               <Route path="/line-chart" element={<LineChart />} />
               <Route path="/bar-chart" element={<BarChart />} />
+
             </Route>
           </Route>
 
@@ -76,6 +78,8 @@ export default function App() {
           <Route path="/verify-otp/:id" element={<OtpVerificationPage />} />
           <Route path="/login-verify-otp/:id" element={<OtpVerificationPage />} />
           <Route path="/change-password/:token" element={<ChangePasswordPage />} />
+          <Route path="/coming-soon" element={<CommingSoon />} />
+
 
 
 
