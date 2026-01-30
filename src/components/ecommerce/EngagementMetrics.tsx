@@ -112,10 +112,10 @@ export default function EngagementMetrics() {
         >
             {/* Header */}
             <div className="mb-5">
-                <h3 className="text-base font-semibold text-gray-800">
+                <h3 className="text-base font-semibold text-black">
                     Engagement
                 </h3>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-black mt-1">
                     Last 7 days activity
                 </p>
             </div>
@@ -131,7 +131,7 @@ export default function EngagementMetrics() {
                             className="flex items-center gap-4 rounded-xl px-4 py-3"
                             style={{
                                 background:
-                                    "linear-gradient(90deg, #E290FF -2.57%, rgba(255, 205, 113, 0) 112.5%)",
+                                    "linear-gradient(135deg, #A50134, #979ECA)",
                             }}
                         >
                             {/* Icon */}
@@ -141,7 +141,7 @@ export default function EngagementMetrics() {
 
                             {/* Text */}
                             <div className="flex-1">
-                                <p className="text-xs font-medium text-gray-600">
+                                <p className="text-xs font-medium text-white">
                                     {item.label}
                                 </p>
                                 <p className="text-base font-semibold text-gray-900">

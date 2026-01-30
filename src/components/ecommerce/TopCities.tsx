@@ -47,7 +47,7 @@ export default function TopCities() {
     const maxValue = Math.max(...cities.map((c) => c.value));
 
     const barGradient: Record<FilterType, string> = {
-        All: "linear-gradient(90deg, #E290FF 0%, rgba(255, 205, 113, 0%) 100%)",
+        All: "linear-gradient(135deg, #A50134, #979ECA)",
         Verified: "linear-gradient(90deg, #E1003340 -2.57%, rgba(255, 205, 113, 0) 112.5%)",
         Premium: "linear-gradient(90deg, #0084C640 -2.57%, rgba(255, 205, 113, 0) 112.5%)",
     };
@@ -68,7 +68,7 @@ export default function TopCities() {
                     {(["All", "Verified", "Premium"] as FilterType[]).map((item) => {
                         const activeBg =
                             item === "All"
-                                ? "bg-[#9B43BB40] text-[#4A1D6D]"
+                                ? "bg-brand-500 text-[#ffffff]"
                                 : item === "Verified"
                                     ? "bg-[#E1003340] text-[#7A001A]"
                                     : "bg-[#0084C640] text-[#003B5C]";
@@ -109,7 +109,7 @@ export default function TopCities() {
                                 }}
                             >
                                 {/* City Name */}
-                                <span className="uppercase tracking-wide text-gray-900">
+                                <span className="uppercase tracking-wide text-white">
                                     {city.name}
                                 </span>
 

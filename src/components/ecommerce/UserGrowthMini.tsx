@@ -15,14 +15,14 @@ export default function UserGrowthMini() {
             toolbar: { show: false },
             zoom: { enabled: false },
         },
-        colors: ["#9B43BB"],
+        colors: ["#A50134"],
         stroke: {
             curve: "smooth",
             width: 3,
         },
         fill: {
             type: "solid",
-            colors: ["#9B43BB40"], // 40 = 25% opacity in hex
+            colors: ["#A5013440"], // 40 = 25% opacity in hex
         },
         grid: {
             borderColor: "#F1F1F1",
@@ -87,8 +87,8 @@ export default function UserGrowthMini() {
                             key={v}
                             onClick={() => setView(v as "W" | "M")}
                             className={`px-3 py-1 text-sm font-medium ${view === v
-                                ? "bg-purple-100 text-purple-700"
-                                : "text-gray-500"
+                                ? "bg-brand-500 text-white"
+                                : "text-black hover:bg-gray-100"
                                 }`}
                         >
                             {v}

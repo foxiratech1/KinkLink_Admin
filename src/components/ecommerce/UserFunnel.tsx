@@ -28,11 +28,11 @@ export default function UserFunnel() {
                         className="flex items-center justify-between rounded-xl px-5 py-4"
                         style={{
                             background:
-                                "linear-gradient(90deg, rgba(155, 67, 187, 25%) 5%, rgba(104, 142, 255, 25%) 100%)",
+                                "linear-gradient(135deg, #A50134, #979ECA)",
                         }}
                     >
                         {/* Label */}
-                        <span className="uppercase tracking-wide text-gray-900 text-sm font-semibold">
+                        <span className="uppercase tracking-wide text-white text-sm font-semibold">
                             {step.label}
                         </span>
 

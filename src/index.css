@@ -181,29 +181,38 @@ layer(base);
   ::file-selector-button {
     border-color: var(--color-gray-200, currentColor);
   }
+
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     cursor: pointer;
   }
-  body {
-    @apply relative font-normal font-outfit z-1 bg-gray-50;
-	overflow-x: hidden;
-  }
-  /* Background image layer */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background-image: url("/images/images/Desctop.jpg");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
 
-  filter: blur(8px); 
-  transform: scale(1); 
-  z-index: -1;
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    @apply relative font-normal font-outfit bg-gray-50;
+    margin: 0;
+  }
+
+  /* Background image layer */
+  html::before {
+    content: "";
+    position: fixed;
+    inset: -20px; /* extra space for blur */
+    background-image: url("/images/images/Desctop.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    filter: blur(8px);
+    transform: scale(1.1); /* prevents blur cut-off */
+    z-index: -1;
+  }
 }
-}
+
 
 @utility menu-item {
   @apply relative flex items-center w-full gap-3 px-3 py-2 font-medium rounded-lg text-theme-sm;
