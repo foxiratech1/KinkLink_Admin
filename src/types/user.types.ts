@@ -5,6 +5,7 @@ export type User = {
     role: "Person" | "Business";
     username?: string;
     name?: string;
+    businessName?: string;
     registrationRole?: "Male" | "Female" | null;
     status: "Pending" | "Approve" | "Reject";
     isBlocked: boolean;

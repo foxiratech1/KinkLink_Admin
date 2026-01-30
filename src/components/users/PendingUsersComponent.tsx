@@ -115,7 +115,7 @@ const PendingUsersComponent = () => {
                                     </TableCell>
 
                                     <TableCell className="px-6 py-4 text-sm">
-                                        {user.name || "-"}
+                                        {user.name || user.businessName || "-"}
                                     </TableCell>
 
                                     <TableCell className="px-6 py-4 text-sm">
@@ -142,7 +142,7 @@ const PendingUsersComponent = () => {
                                         {new Date(user.createdAt).toLocaleDateString()}
                                     </TableCell>
 
-                                    <TableCell className="px-6 py-4">
+                                    {/* <TableCell className="px-6 py-4">
                                         <div className="flex gap-2">
                                             <Button
                                                 size="sm"
@@ -170,7 +170,42 @@ const PendingUsersComponent = () => {
                                                 {actionLoading === user._id ? "..." : "Reject"}
                                             </Button>
                                         </div>
+                                    </TableCell> */}
+                                    <TableCell className="px-6 py-4">
+                                        <div className="flex gap-2">
+                                            {/* Show Approve button if status is Pending OR Rejected */}
+                                            {(user.status === "Pending" || user.status === "Reject") && (
+                                                <Button
+                                                    size="sm"
+                                                    variant="primary"
+                                                    onClick={(e) => {
+                                                        e?.stopPropagation();
+                                                        handleApprove(user._id);
+                                                    }}
+                                                    disabled={actionLoading === user._id}
+                                                >
+                                                    {actionLoading === user._id ? "..." : "Approve"}
+                                                </Button>
+                                            )}
+
+                                            {/* Show Reject button ONLY if status is Pending */}
+                                            {user.status === "Pending" && (
+                                                <Button
+                                                    size="sm"
+                                                    variant="outline"
+                                                    onClick={(e) => {
+                                                        e?.stopPropagation();
+                                                        handleReject(user._id);
+                                                    }}
+                                                    disabled={actionLoading === user._id}
+                                                    className="text-red-600 hover:bg-red-50"
+                                                >
+                                                    {actionLoading === user._id ? "..." : "Reject"}
+                                                </Button>
+                                            )}
+                                        </div>
                                     </TableCell>
+
                                 </TableRow>
                             ))}
                         </TableBody>
