@@ -1,6 +1,6 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { UserDetail, BusinessDetails } from "../../types/userDetails.types";
+import { UserDetail, BusinessDetails } from "../../types/user.types";
 import { updateUserRegiStatusApi, updateUserBlockStatus } from "../../api/usersapi";
 import Button from "../ui/button/Button";
 import { useNavigate } from "react-router";

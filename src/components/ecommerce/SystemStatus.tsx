@@ -1,4 +1,7 @@
 import { FaCheckCircle, FaExclamationTriangle, FaTimesCircle } from "react-icons/fa";
+import { useNavigate } from "react-router";
+
+
 
 type StatusType = "operational" | "degraded" | "down";
 
@@ -41,6 +44,7 @@ function StatusIcon({ status }: { status: StatusType }) {
 }
 
 export default function SystemStatus() {
+    const navigate = useNavigate();
     return (
         <div
             className="rounded-2xl bg-white p-6"
@@ -69,12 +73,16 @@ export default function SystemStatus() {
                         </span>
 
                         {/* Value + status */}
-                        <div className="flex items-center gap-3">
+                        <div
+                            onClick={() => navigate("/system-issues")}
+                            className="flex items-center gap-3 cursor-pointer hover:bg-gray-100 rounded-md px-2 py-1 transition"
+                        >
                             {item.status && <StatusIcon status={item.status} />}
                             <span className="text-sm font-semibold text-gray-900">
                                 {item.value}
                             </span>
                         </div>
+
                     </div>
                 ))}
             </div>

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import toast from "react-hot-toast";
 import { getUserDetailsApi } from "../../api/usersapi";
-import { UserDetailsResponse } from "../../types/userDetails.types";
+import { UserDetailsResponse } from "../../types/user.types";
 import PersonDetailsComp from "../../components/users/PersonDetailsComp";
 import BusinessDetailsComp from "../../components/users/BusinessDetailsComp";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";

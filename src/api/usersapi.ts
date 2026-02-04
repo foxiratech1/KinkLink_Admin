@@ -2,11 +2,11 @@ import axiosInstance from "../utils/axios";
 import { API_ROUTES } from "../config/api";
 import {
     GetAllUsersResponse,
-    GetPendingUsersResponse,
     GetUsersParams,
     UserActionResponse,
+    UserDetailsResponse
 } from "../types/user.types";
-import { UserDetailsResponse } from "../types/userDetails.types";
+// import { UserDetailsResponse } from "../types/userDetails.types";
 
 /* ===================== API FUNCTIONS ===================== */
 
@@ -28,12 +28,58 @@ export const getAllUsersApi = async (
     return res.data;
 };
 
-//  GET PENDING USERS
-export const getPendingUsersApi = async (): Promise<GetPendingUsersResponse> => {
-    const res = await axiosInstance.get<GetPendingUsersResponse>(
-        API_ROUTES.USERS.GET_PENDING
-    );
+//  GET BLOCKED USERS
+export const getBlockedUsersApi = async (
+    params?: GetUsersParams
+): Promise<GetAllUsersResponse> => {
+    const queryParams = new URLSearchParams();
+
+    if (params?.page) queryParams.append("page", params.page.toString());
+    if (params?.limit) queryParams.append("limit", params.limit.toString());
+    if (params?.search) queryParams.append("search", params.search);
+    if (params?.role && params.role !== "All") queryParams.append("role", params.role);
+    if (params?.status) queryParams.append("status", params.status);
+
+    const url = `${API_ROUTES.USERS.BLOCKED_USERS}${queryParams.toString() ? `?${queryParams.toString()}` : ""}`;
+
+    const res = await axiosInstance.get<GetAllUsersResponse>(url);
     return res.data;
+};
+
+//  GET PENDING USERS
+export const getPendingUsersApi = async (
+    params?: GetUsersParams
+): Promise<GetAllUsersResponse> => {
+    const queryParams = new URLSearchParams();
+
+    if (params?.page) queryParams.append("page", params.page.toString());
+    if (params?.limit) queryParams.append("limit", params.limit.toString());
+    if (params?.search) queryParams.append("search", params.search);
+    if (params?.role && params.role !== "All") queryParams.append("role", params.role);
+    if (params?.status) queryParams.append("status", params.status);
+
+    const url = `${API_ROUTES.USERS.GET_PENDING}${queryParams.toString() ? `?${queryParams.toString()}` : ""}`;
+
+    const res = await axiosInstance.get<GetAllUsersResponse>(url);
+    return res?.data;
+};
+
+// GET REJECT USERS
+export const getRejectUsersApi = async (
+    params?: GetUsersParams
+): Promise<GetAllUsersResponse> => {
+    const queryParams = new URLSearchParams();
+
+    if (params?.page) queryParams.append("page", params.page.toString());
+    if (params?.limit) queryParams.append("limit", params.limit.toString());
+    if (params?.search) queryParams.append("search", params.search);
+    if (params?.role && params.role !== "All") queryParams.append("role", params.role);
+    if (params?.status) queryParams.append("status", params.status);
+
+    const url = `${API_ROUTES.USERS.GET_REJECT}${queryParams.toString() ? `?${queryParams.toString()}` : ""}`;
+
+    const res = await axiosInstance.get<GetAllUsersResponse>(url);
+    return res?.data;
 };
 
 //  GET USER DETAILS BY ID

@@ -23,9 +23,13 @@ import OtpVerificationPage from "./pages/AuthPages/OtpVerification";
 import ChangePasswordPage from "./pages/AuthPages/ChangePassword";
 import AllUsersPage from "./pages/Users/AllUsersPage";
 import PendingUsersPage from "./pages/Users/PendingUsersPage";
+import RejectUsersPage from "./pages/Users/RejctUsersPage";
+import BlockedUsersPage from "./pages/Users/BlockedUserPage";
 import UserDetailsPage from "./pages/Users/UserDetailsPage";
 import InterestManagementPage from "./pages/Interests/InterestManagementPage";
+import EventManager from "./pages/Events/EventManager";
 import CommingSoon from "./pages/OtherPage/CommingSoon";
+import SystemIssueManage from "./pages/SystemIssues/SystemIssueManage";
 
 export default function App() {
   return (
@@ -42,14 +46,18 @@ export default function App() {
               <Route path="/profile" element={<UserProfiles />} />
               <Route path="/calendar" element={<Calendar />} />
               <Route path="/blank" element={<Blank />} />
+              <Route path="/system-issues" element={<SystemIssueManage />} />
 
               {/* User Management */}
               <Route path="/users/all" element={<AllUsersPage />} />
               <Route path="/users/pending" element={<PendingUsersPage />} />
+              <Route path="/users/reject" element={<RejectUsersPage />} />
+              <Route path="/users/blocked" element={<BlockedUsersPage />} />
               <Route path="/users/details/:id" element={<UserDetailsPage />} />
 
               {/* Interest Management */}
               <Route path="/interests" element={<InterestManagementPage />} />
+              <Route path="/events" element={<EventManager />} />
 
               {/* Forms */}
               <Route path="/form-elements" element={<FormElements />} />
