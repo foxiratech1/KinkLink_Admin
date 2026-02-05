@@ -6,12 +6,13 @@ import { getRejectUsersApi, updateUserRegiStatusApi } from "../../api/usersapi";
 import { User } from "../../types/user.types";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "../ui/table";
 import Button from "../ui/button/Button";
+import Pagination from "../ui/pagination/Pagination";
 
 type TabType = "All" | "Person" | "Business";
 
 const RejectUsersComponent = () => {
     const [users, setUsers] = useState<User[]>([]);
-    const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
+    // const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
     const [activeTab, setActiveTab] = useState<TabType>("All");
     const [loading, setLoading] = useState(false);
     const [actionLoading, setActionLoading] = useState<string | null>(null);
@@ -48,9 +49,30 @@ const RejectUsersComponent = () => {
     }, [currentPage, searchQuery, activeTab]);
 
     // Update filteredUsers when users change
-    useEffect(() => {
-        setFilteredUsers(users);
-    }, [users]);
+    // useEffect(() => {
+    //     let result = [...users];
+
+    //     //  SEARCH FILTER
+    //     if (searchQuery.trim()) {
+    //         const q = searchQuery.toLowerCase();
+
+    //         result = result.filter((user) => {
+    //             return (
+    //                 user.email?.toLowerCase().includes(q) ||
+    //                 user.username?.toLowerCase().includes(q) ||
+    //                 user.name?.toLowerCase().includes(q) ||
+    //                 user.businessProfile?.businessName?.toLowerCase().includes(q)
+    //             );
+    //         });
+    //     }
+
+    //     //  TAB FILTER
+    //     if (activeTab !== "All") {
+    //         result = result.filter((user) => user.role === activeTab);
+    //     }
+
+    //     setUsers(result);
+    // }, [users, activeTab, searchQuery]);
 
     // Handle approve
     const handleApprove = async (userId: string) => {
@@ -111,7 +133,7 @@ const RejectUsersComponent = () => {
                     <div className="flex justify-center py-12">
                         <div className="h-8 w-8 animate-spin rounded-full border-4 border-brand-500 border-t-transparent"></div>
                     </div>
-                ) : filteredUsers.length === 0 ? (
+                ) : users.length === 0 ? (
                     <div className="py-12 text-center text-gray-500 dark:text-gray-400">
                         No Reject users found
                     </div>
@@ -142,7 +164,7 @@ const RejectUsersComponent = () => {
                             </TableHeader>
 
                             <TableBody className="divide-y divide-gray-200 dark:divide-gray-700">
-                                {filteredUsers.map((user) => (
+                                {users.map((user) => (
                                     <TableRow
                                         key={user._id}
                                         onClick={() => navigate(`/users/details/${user._id}`)}
@@ -207,31 +229,14 @@ const RejectUsersComponent = () => {
                 )}
 
                 {/* PAGINATION */}
-                {!loading && filteredUsers.length > 0 && (
-                    <div className="flex items-center justify-between border-t border-gray-200 px-6 py-4 dark:border-gray-700">
-                        <p className="text-sm text-gray-700 dark:text-gray-300">
-                            Showing {(currentPage - 1) * limit + 1} to{" "}
-                            {Math.min(currentPage * limit, totalUsers)} of {totalUsers}
-                        </p>
-                        <div className="flex gap-2">
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                                disabled={currentPage === 1}
-                            >
-                                Previous
-                            </Button>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                                disabled={currentPage === totalPages}
-                            >
-                                Next
-                            </Button>
-                        </div>
-                    </div>
+                {!loading && users.length > 0 && (
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={setCurrentPage}
+                        totalItems={totalUsers}
+                        itemsPerPage={limit}
+                    />
                 )}
             </div>
         </div>

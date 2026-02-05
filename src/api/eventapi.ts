@@ -1,33 +1,35 @@
 import axiosInstance from "../utils/axios";
 import {
-    EventType,
+    // EventType,
     GetEventListResponse,
     AddEventRequest,
+    GetEventListRequest,
     UpdateEventRequest,
     EventActionResponse,
 } from "../types/event.types";
+import { API_ROUTES } from "../config/api";
 
 /* ===================== API FUNCTIONS ===================== */
 
 //  GET ALL EVENT TYPES
-export const getEventTypeListApi = async (): Promise<EventType[]> => {
-    // Note: User specified 'get: api/admin/event-type-list'
-    // I am assuming a base URL or prefix handling in axiosInstance, usually it's /api/v1 or similar.
-    // Based on user request, the path is exactly api/admin/event-type-list
+export const getEventTypeListApi = async (
+    params?: GetEventListRequest
+): Promise<GetEventListResponse> => {
     const res = await axiosInstance.get<GetEventListResponse>(
-        "/api/admin/event-type-list"
+        API_ROUTES.EVENT.GET_EVENT_TYPE_LIST,
+        { params }
     );
-    // Handle potential response structures
-    return res.data.data || res.data.eventTypes || [];
+
+    return res.data;
 };
+
 
 //  ADD EVENT TYPE
 export const addEventTypeApi = async (
     data: AddEventRequest
 ): Promise<EventActionResponse> => {
-    // User specified 'post: api/admin/event-type'
     const res = await axiosInstance.post<EventActionResponse>(
-        "/api/admin/event-type",
+        API_ROUTES.EVENT.ADD_EVENT_TYPE,
         data
     );
     return res.data;
@@ -38,9 +40,8 @@ export const updateEventTypeApi = async (
     id: string,
     data: UpdateEventRequest
 ): Promise<EventActionResponse> => {
-    // User specified 'put: api/admin/update-event-type/:eventTypeId'
     const res = await axiosInstance.put<EventActionResponse>(
-        `/api/admin/update-event-type/${id}`,
+        API_ROUTES.EVENT.UPDATE_EVENT_TYPE(id),
         data
     );
     return res.data;
@@ -50,9 +51,8 @@ export const updateEventTypeApi = async (
 export const deleteEventTypeApi = async (
     id: string
 ): Promise<EventActionResponse> => {
-    // User specified 'delete: api/admin/delete-event-type/ID'
     const res = await axiosInstance.delete<EventActionResponse>(
-        `/api/admin/delete-event-type/${id}`
+        API_ROUTES.EVENT.DELETE_EVENT_TYPE(id)
     );
     return res.data;
 };

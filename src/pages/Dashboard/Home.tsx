@@ -3,7 +3,7 @@ import MonthlySalesChart from "../../components/ecommerce/UserGrowthChart";
 import StatisticsChart from "../../components/ecommerce/PlatformActivity";
 import MonthlyTarget from "../../components/ecommerce/VerificationProgress";
 import RecentOrders from "../../components/ecommerce/RecentAdminActions";
-import DemographicCard from "../../components/ecommerce/DemographicCard";
+// import DemographicCard from "../../components/ecommerce/DemographicCard";
 import PageMeta from "../../components/common/PageMeta";
 import PhotoMetrics from "../../components/ecommerce/PhotoMetrics";
 import TopCities from "../../components/ecommerce/TopCities";
@@ -63,7 +63,7 @@ export default function Home() {
 
         </div>
         <div className="col-span-12 xl:col-span-5">
-          <DemographicCard />
+          {/* <DemographicCard /> */}
 
         </div>
         {/* Row 6: Top Cities */}

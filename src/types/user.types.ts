@@ -29,10 +29,6 @@ export type GetAllUsersResponse = {
     users: User[];
 };
 
-// Response type for GET /api/admin/users-pending
-// export type GetPendingUsersResponse = {
-//     data: User[];
-// };
 
 // Query params for fetching users
 export type GetUsersParams = {

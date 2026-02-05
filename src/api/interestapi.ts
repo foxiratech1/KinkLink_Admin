@@ -1,9 +1,10 @@
 import axiosInstance from "../utils/axios";
 import { API_ROUTES } from "../config/api";
 import {
-    Interest,
+    // Interest,
     GetInterestListResponse,
     AddInterestRequest,
+    GetInterestListRequest,
     UpdateInterestRequest,
     InterestActionResponse,
 } from "../types/interest.types";
@@ -11,11 +12,12 @@ import {
 /* ===================== API FUNCTIONS ===================== */
 
 //  GET ALL INTERESTS
-export const getInterestListApi = async (): Promise<Interest[]> => {
+export const getInterestListApi = async (params?: GetInterestListRequest): Promise<GetInterestListResponse> => {
     const res = await axiosInstance.get<GetInterestListResponse>(
-        API_ROUTES.INTERESTS.GET_LIST
+        API_ROUTES.INTERESTS.GET_LIST,
+        { params }
     );
-    return res.data.data || res.data.interests || [];
+    return res.data;
 };
 
 //  ADD INTEREST

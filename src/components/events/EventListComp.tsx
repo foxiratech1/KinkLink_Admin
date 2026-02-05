@@ -18,6 +18,7 @@ const EventListComp = ({ refreshTrigger, onEdit }: EventListCompProps) => {
     const [loading, setLoading] = useState(false);
     const [deletingId, setDeletingId] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState("");
+    const [categoryFilter, setCategoryFilter] = useState<"all" | "event" | "eventMeet">("all");
 
     // Pagination
     const [currentPage, setCurrentPage] = useState(1);
@@ -26,9 +27,9 @@ const EventListComp = ({ refreshTrigger, onEdit }: EventListCompProps) => {
     const fetchEvents = async () => {
         setLoading(true);
         try {
-            const data = await getEventTypeListApi();
-            setEvents(data);
-            setFilteredEvents(data);
+            const res = await getEventTypeListApi();
+            setEvents(res.data);
+            setFilteredEvents(res.data);
         } catch (error: any) {
             toast.error(error?.response?.data?.message || "Failed to fetch event types");
         } finally {
@@ -40,15 +41,17 @@ const EventListComp = ({ refreshTrigger, onEdit }: EventListCompProps) => {
         fetchEvents();
     }, [refreshTrigger]);
 
-    // Handle Search
+    // Handle Search and Filter
     useEffect(() => {
         const query = searchQuery.toLowerCase();
-        const filtered = events.filter((event) =>
-            event.eventType.toLowerCase().includes(query)
-        );
+        const filtered = events.filter((event) => {
+            const matchesSearch = event.eventType.toLowerCase().includes(query);
+            const matchesCategory = categoryFilter === "all" || event.category === categoryFilter;
+            return matchesSearch && matchesCategory;
+        });
         setFilteredEvents(filtered);
-        setCurrentPage(1); // Reset to first page on search
-    }, [searchQuery, events]);
+        setCurrentPage(1); // Reset to first page on search/filter
+    }, [searchQuery, categoryFilter, events]);
 
     // Pagination Logic
     const totalPages = Math.ceil(filteredEvents.length / ITEMS_PER_PAGE);
@@ -97,17 +100,54 @@ const EventListComp = ({ refreshTrigger, onEdit }: EventListCompProps) => {
                     Event List
                 </h2>
                 {/* Search Bar */}
-                <div className="relative w-full sm:w-64">
-                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                        <SearchIcon className="h-5 w-5 text-gray-400" />
+                {/* Search Bar & Filter */}
+                <div className="flex w-full flex-col gap-4 sm:w-auto sm:flex-row sm:items-center">
+                    {/* Filter Buttons */}
+                    <div className="flex rounded-md shadow-sm" role="group">
+                        <button
+                            type="button"
+                            onClick={() => setCategoryFilter("all")}
+                            className={`rounded-l-lg border px-4 py-2 text-sm font-medium ${categoryFilter === "all"
+                                ? "bg-brand-500 text-white border-brand-500"
+                                : "bg-white text-gray-900 border-gray-200 hover:bg-gray-100 hover:text-brand-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600"
+                                }`}
+                        >
+                            All
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setCategoryFilter("event")}
+                            className={`border-t border-b px-4 py-2 text-sm font-medium ${categoryFilter === "event"
+                                ? "bg-brand-500 text-white border-brand-500 z-10"
+                                : "bg-white text-gray-900 border-gray-200 hover:bg-gray-100 hover:text-brand-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600"
+                                }`}
+                        >
+                            Event
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setCategoryFilter("eventMeet")}
+                            className={`rounded-r-lg border px-4 py-2 text-sm font-medium ${categoryFilter === "eventMeet"
+                                ? "bg-brand-500 text-white border-brand-500"
+                                : "bg-white text-gray-900 border-gray-200 hover:bg-gray-100 hover:text-brand-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600"
+                                }`}
+                        >
+                            Event Meet
+                        </button>
                     </div>
-                    <input
-                        type="text"
-                        placeholder="Search events..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pl-10 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
-                    />
+
+                    <div className="relative w-full sm:w-64">
+                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                            <SearchIcon className="h-5 w-5 text-gray-400" />
+                        </div>
+                        <input
+                            type="text"
+                            placeholder="Search events..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pl-10 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
+                        />
+                    </div>
                 </div>
             </div>
 
@@ -128,7 +168,7 @@ const EventListComp = ({ refreshTrigger, onEdit }: EventListCompProps) => {
                                         Event Type
                                     </TableCell>
                                     <TableCell isHeader className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 dark:text-gray-300">
-                                        Created At
+                                        Category
                                     </TableCell>
                                     <TableCell isHeader className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 dark:text-gray-300">
                                         Actions
@@ -145,8 +185,8 @@ const EventListComp = ({ refreshTrigger, onEdit }: EventListCompProps) => {
                                             {event.eventType}
                                         </TableCell>
                                         <TableCell className="whitespace-nowrap px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
-                                            {event.createdAt
-                                                ? new Date(event.createdAt).toLocaleDateString()
+                                            {event.category
+                                                ? event.category.toLocaleUpperCase()
                                                 : "-"}
                                         </TableCell>
                                         <TableCell className="whitespace-nowrap px-6 py-4 text-sm">

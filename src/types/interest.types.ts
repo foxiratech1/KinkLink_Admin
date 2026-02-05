@@ -9,10 +9,22 @@ export type Interest = {
 
 // API Response types
 export type GetInterestListResponse = {
+    message: string;
+    total: number;
+    page: number;
+    limit: number;
+    data: Interest[];
+} | {
     data?: Interest[];
     interests?: Interest[];
     message?: string;
     success?: boolean;
+};
+
+export type GetInterestListRequest = {
+    page: number;
+    limit: number;
+    search?: string;
 };
 
 export type AddInterestRequest = {

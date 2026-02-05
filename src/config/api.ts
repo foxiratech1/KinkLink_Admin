@@ -6,7 +6,9 @@ export const API_ROUTES = {
     LOGIN_VERIFY_OTP: (id: string) => `api/admin/login-verify-otp/${id}`,
     VERIFY_OTP: (id: string) => `api/admin/verify-otp/${id}`,
     RESET_PASSWORD: (token: string) => `api/admin/reset-password/${token}`,
-    RESEND_OTP: (id: string) => `api/admin/resend-otp/${id}`
+    RESEND_OTP: (id: string) => `api/admin/resend-otp/${id}`,
+    GET_PROFILE: "/api/admin/profile-details",
+    UPDATE_PROFILE: "/api/admin/update-profile",
   },
   USERS: {
     GET_ALL: "api/admin/users",
@@ -24,4 +26,11 @@ export const API_ROUTES = {
     DELETE: (id: string) => `api/admin/delete-interest/${id}`,
     UPDATE: (id: string) => `api/admin/update-interest/${id}`,
   },
+  EVENT: {
+    GET_EVENT_TYPE_LIST: "api/admin/event-type-list",
+    ADD_EVENT_TYPE: "api/admin/event-type",
+    UPDATE_EVENT_TYPE: (id: string) => `api/admin/update-event-type/${id}`,
+    DELETE_EVENT_TYPE: (id: string) => `api/admin/delete-event-type/${id}`,
+  },
 };
+

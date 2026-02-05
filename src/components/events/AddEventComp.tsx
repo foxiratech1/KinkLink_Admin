@@ -12,14 +12,17 @@ type AddEventCompProps = {
 
 const AddEventComp = ({ editingEvent, onSuccess, onCancelEdit }: AddEventCompProps) => {
     const [eventType, setEventType] = useState("");
+    const [category, setCategory] = useState("event");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
     useEffect(() => {
         if (editingEvent) {
             setEventType(editingEvent.eventType);
+            setCategory(editingEvent.category || "event");
         } else {
             setEventType("");
+            setCategory("event");
         }
         setError("");
     }, [editingEvent]);
@@ -44,16 +47,19 @@ const AddEventComp = ({ editingEvent, onSuccess, onCancelEdit }: AddEventCompPro
                 // Update existing event type
                 await updateEventTypeApi(editingEvent._id, {
                     eventType: eventType.trim(),
+                    category,
                 });
                 toast.success("Event type updated successfully");
             } else {
                 // Add new event type
                 await addEventTypeApi({
                     eventType: eventType.trim(),
+                    category,
                 });
                 toast.success("Event type added successfully");
             }
             setEventType("");
+            setCategory("event");
             setError("");
             onSuccess();
         } catch (err: any) {
@@ -68,6 +74,7 @@ const AddEventComp = ({ editingEvent, onSuccess, onCancelEdit }: AddEventCompPro
 
     const handleCancel = () => {
         setEventType("");
+        setCategory("event");
         setError("");
         onCancelEdit();
     };
@@ -78,6 +85,24 @@ const AddEventComp = ({ editingEvent, onSuccess, onCancelEdit }: AddEventCompPro
                 {editingEvent ? "Edit Event Type" : "Add New Event Type"}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                    <label
+                        htmlFor="category"
+                        className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                    >
+                        Category
+                    </label>
+                    <select
+                        id="category"
+                        value={category}
+                        onChange={(e) => setCategory(e.target.value)}
+                        className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                        disabled={loading}
+                    >
+                        <option value="event">Event</option>
+                        <option value="eventMeet">Event Meet</option>
+                    </select>
+                </div>
                 <div>
                     <label
                         htmlFor="eventType"

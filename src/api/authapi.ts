@@ -105,13 +105,13 @@ export const resendOtpApi = async (id: string) => {
 };
 // GET PROFILE
 export const getProfileApi = async (): Promise<Profile> => {
-    const res = await axiosInstance.get("/api/admin/profile-details");
+    const res = await axiosInstance.get(API_ROUTES.AUTH.GET_PROFILE);
     return res.data.data;
 };
 // UPDATE PROFILE
 export const updateProfileApi = async (
     payload: Partial<Profile>
 ) => {
-    return axiosInstance.put("/api/admin/update-profile", payload);
+    return axiosInstance.put(API_ROUTES.AUTH.UPDATE_PROFILE, payload);
 };
 
