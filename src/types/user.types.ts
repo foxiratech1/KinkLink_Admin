@@ -1,16 +1,25 @@
 // User type based on API response
 export type User = {
     _id: string;
+    verificationId: string;
     email: string;
     role: "Person" | "Business";
     username?: string;
     name?: string;
     businessName?: string;
     registrationRole?: "Male" | "Female" | null;
-    status: "Pending" | "Approve" | "Reject";
+    status: "Pending" | "Approved" | "Reject";
     isBlocked: boolean;
     isOnline: boolean;
     createdAt: string;
+    verification?: {
+        overallStatus:
+        | "Pending"
+        | "Approved"
+        | "Manual_Review"
+        | "Rejected";
+
+    };
     businessProfile?: {
         businessName?: string;
         profileImg?: string;
@@ -48,6 +57,7 @@ export type UserActionResponse = {
 export type UserDetail = {
     isBlocked: boolean;
     _id: string;
+    verificationId: string;
     email: string;
     role: "Person" | "Business";
     username?: string;
@@ -67,6 +77,8 @@ export type UserDetail = {
 
 // Person profile types
 export type PersonDetails = {
+
+    profileImg?: string;
     lookingFor: {
         ageRange: {
             min: number;
@@ -88,7 +100,12 @@ export type PersonDetails = {
     hostingStatus?: string;
     travelStatus?: string;
     badges: string[];
-    interests: string[];
+    interests: Array<{
+        interestId: string;
+        interestName: string;
+        _id: string;
+    }>;
+
     isProfileComplete: boolean;
     isDeleted: boolean;
     createdAt: string;
@@ -100,6 +117,7 @@ export type PersonDetails = {
 export type BusinessDetails = {
     _id: string;
     userId: string;
+    verificationId: string;
     businessName: string;
     businessCategory: string;
     telephone: string;
@@ -112,7 +130,67 @@ export type BusinessDetails = {
 
 // API Response type for get-user-details endpoint
 export type UserDetailsResponse = {
+    verification: VerificationUser;
     user: UserDetail;
     personProfile: PersonDetails | null;
     businessProfile: BusinessDetails | null;
+};
+
+// Verification types
+export type VerificationUser = {
+    _id: string;
+    user: {
+        _id: string;
+        email: string;
+        name: string;
+        registrationRole: string;
+        isVerified: boolean;
+    };
+    attempts: number;
+    overallStatus: "Approved" | "Rejected" | "Pending";
+    isDeleted: boolean;
+    submittedAt: string;
+    lastUpdatedAt: string;
+    liveSelfieVerification: {
+        image: string;
+        status: string;
+        verifiedAt: string;
+        failureReason: string | null;
+    };
+    selfieImage: {
+        image: string;
+        status: string;
+        uploadedAt: string;
+        approvedAt: string;
+        rejectedAt: string | null;
+        rejectionReason: string | null;
+    };
+    verifyId: {
+        document: string;
+        status: string;
+        verifiedAt: string;
+        failureReason: string | null;
+        ocrText: string;
+    };
+};
+
+export type GetUserVerificationsResponse = {
+    success: boolean;
+    data: VerificationUser[];
+    totalCount: number;
+    pagination: {
+        page: number;
+        hasPrevious: boolean;
+        previous: number;
+        hasNext: boolean;
+        next: number;
+        totalPages: number;
+    };
+};
+
+export type GetUserVerificationsParams = {
+    page?: number;
+    limit?: number;
+    status?: "Approved" | "Rejected" | "Pending" | "Manual_Review";
+    search?: string;
 };

@@ -52,9 +52,10 @@ const navItems: NavItem[] = [
         icon: <UserCircleIcon />,
         subItems: [
           { name: "All Users", path: "/users/all" },
-          { name: "Pending Users", path: "/users/pending" },
-          { name: "Blocked Users", path: "/users/blocked" },
-          { name: "Rejected Users", path: "/users/reject" },
+          // { name: "Pending Users", path: "/users/pending" },
+          // { name: "Blocked Users", path: "/users/blocked" },
+          // { name: "Rejected Users", path: "/users/reject" },
+          { name: "User Verification", path: "/users/verification" },
         ],
       },
       {

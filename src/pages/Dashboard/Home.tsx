@@ -11,6 +11,9 @@ import UserFunnel from "../../components/ecommerce/UserFunnel";
 import UserGrowthMini from "../../components/ecommerce/UserGrowthMini";
 import EngagementMetrics from "../../components/ecommerce/EngagementMetrics";
 import SystemStatus from "../../components/ecommerce/SystemStatus";
+import UserActivityChart from "../../components/ecommerce/ActiveChartsList";
+
+
 
 export default function Home() {
   return (
@@ -27,24 +30,26 @@ export default function Home() {
         </div>
 
         {/* Row 2: Two equal-width cards */}
-        <div className="col-span-12 xl:col-span-6">
+        <div className="col-span-12 xl:col-span-8">
           <UserGrowthMini />
         </div>
 
-        <div className="col-span-12 xl:col-span-6">
+        <div className="col-span-12 xl:col-span-4">
           <UserFunnel />
         </div>
 
         {/* Row 3: Full-width StatisticsChart */}
-        <div className="col-span-12 xl:col-span-7">
+        <div className="col-span-12 xl:col-span-4">
           <TopCities />
 
         </div>
 
         {/* Row 4: Two cards side by side */}
-        <div className="col-span-12 xl:col-span-5">
+        <div className="col-span-12 xl:col-span-4">
           <EngagementMetrics />
-
+        </div>
+        <div className="col-span-12 xl:col-span-4">
+          <UserActivityChart />
         </div>
 
         <div className="col-span-12 xl:col-span-5">
@@ -57,17 +62,13 @@ export default function Home() {
         </div>
 
         <div className="col-span-12 lg:col-span-7">
-
           <StatisticsChart />
-
-
         </div>
-        <div className="col-span-12 xl:col-span-5">
-          {/* <DemographicCard /> */}
-
-        </div>
+        {/* <div className="col-span-12 xl:col-span-5">
+          <DemographicCard />
+        </div> */}
         {/* Row 6: Top Cities */}
-        <div className="col-span-12">
+        <div className="col-span-5">
           <SystemStatus />
 
 
@@ -78,6 +79,8 @@ export default function Home() {
         <div className="col-span-12">
           <RecentOrders />
         </div>
+
+
       </div>
     </>
   );

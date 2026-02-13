@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { getInterestListApi, deleteInterestApi } from "../../api/interestapi";
 import { Interest } from "../../types/interest.types";
@@ -21,7 +21,7 @@ const InterestListComp = ({ refreshTrigger, onEdit }: InterestListCompProps) => 
     const [totalInterests, setTotalInterests] = useState(0);
     const ITEMS_PER_PAGE = 10;
 
-    const fetchInterests = async () => {
+    const fetchInterests = useCallback(async () => {
         setLoading(true);
         try {
             const data = await getInterestListApi({
@@ -29,27 +29,27 @@ const InterestListComp = ({ refreshTrigger, onEdit }: InterestListCompProps) => 
                 limit: ITEMS_PER_PAGE,
             });
 
-            if ('data' in data && Array.isArray(data.data)) {
+            if ("data" in data && Array.isArray(data.data)) {
                 setInterests(data.data);
-                // @ts-ignore
-                setTotalInterests(data.total || data.data.length);
-            } else if (Array.isArray(data)) {
-                setInterests(data);
-                setTotalInterests(data.length);
-            } else {
-                setInterests([]);
-                setTotalInterests(0);
+
+                if ("total" in data && typeof data.total === "number") {
+                    setTotalInterests(data.total);
+                } else {
+                    setTotalInterests(data.data.length);
+                }
             }
+
         } catch (error: any) {
             toast.error(error?.response?.data?.message || "Failed to fetch interests");
         } finally {
             setLoading(false);
         }
-    };
+    }, [currentPage, ITEMS_PER_PAGE]);
 
     useEffect(() => {
         fetchInterests();
-    }, [refreshTrigger, currentPage]);
+    }, [fetchInterests, refreshTrigger]);
+
 
     const handleDelete = async (id: string, name: string) => {
         if (!confirm(`Are you sure you want to delete "${name}"?`)) {

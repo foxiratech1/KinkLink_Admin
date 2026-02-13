@@ -47,7 +47,7 @@ export default function SystemStatus() {
     const navigate = useNavigate();
     return (
         <div
-            className="rounded-2xl bg-white p-6"
+            className="rounded-2xl bg-white p-6 h-full"
             style={{ border: "1px solid #9B43BB40" }}
         >
             {/* Header */}
