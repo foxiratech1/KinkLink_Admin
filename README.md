@@ -1,4 +1,4 @@
-# kinklink React - Free React Tailwind Admin Dashboard Template
+# kinklink React - React Tailwind Admin Dashboard Template
 
 kinklink is a free and open-source admin dashboard template built on **React and Tailwind CSS**, providing developers
 with everything they need to create a comprehensive, data-driven back-end,

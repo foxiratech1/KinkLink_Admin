@@ -2,7 +2,7 @@ import { useState } from "react";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import UserVerificationList from "../../components/users/UserVerificationList";
 
-type TabType = "Verified" | "Manual_Review" | "Unverified" | "Pending";
+type TabType = "Verified" | "Unverified" | "Pending";
 
 const UserVerificationPage = () => {
     const [activeTab, setActiveTab] = useState<TabType>("Verified");
@@ -27,7 +27,7 @@ const UserVerificationPage = () => {
                         >
                             Verified Users
                         </button>
-                        <button
+                        {/* <button
                             onClick={() => setActiveTab("Manual_Review")}
                             className={`px-4 py-2 font-medium transition-colors ${activeTab === "Manual_Review"
                                 ? "border-b-2 border-brand-500 text-brand-600 dark:text-brand-400"
@@ -35,7 +35,7 @@ const UserVerificationPage = () => {
                                 }`}
                         >
                             Manual Review
-                        </button>
+                        </button> */}
                         <button
                             onClick={() => setActiveTab("Pending")}
                             className={`px-4 py-2 font-medium transition-colors ${activeTab === "Pending"
@@ -60,8 +60,6 @@ const UserVerificationPage = () => {
                 {/* CONTENT */}
                 {activeTab === "Verified" ? (
                     <UserVerificationList status="Approved" />
-                ) : activeTab === "Manual_Review" ? (
-                    <UserVerificationList status="Manual_Review" />
                 ) : activeTab === "Pending" ? (
                     <UserVerificationList status="Pending" />
                 ) : (

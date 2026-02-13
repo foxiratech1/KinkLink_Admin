@@ -40,11 +40,11 @@ export const updateUserRegiStatusApi = async (
     const formattedStatus =
         status === "Approve" ? "Approved" : "Rejected";
 
-    const res = await axiosInstance.put<UserActionResponse>(
+    const res = await axiosInstance.patch<UserActionResponse>(
         API_ROUTES.USERS.APPROVEREJECT(verificationId),
         {
             status: formattedStatus,
-            user: userId,
+            userId: userId,
         }
     );
 

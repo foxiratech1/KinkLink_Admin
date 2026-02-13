@@ -22,7 +22,7 @@ const getVerificationImage = (user: VerificationUser): string | null => {
 
 
 interface UserVerificationListProps {
-    status: "Approved" | "Rejected" | "Pending" | "Manual_Review"; // "Approved" for verified, "Rejected" for unverified (or could be "Pending" depending on requirement clarification)
+    status: "Approved" | "Rejected" | "Pending"; // "Approved" for verified, "Rejected" for unverified (or could be "Pending" depending on requirement clarification)
 }
 
 const UserVerificationList = ({ status }: UserVerificationListProps) => {
