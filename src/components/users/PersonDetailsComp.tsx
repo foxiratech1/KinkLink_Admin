@@ -528,7 +528,7 @@ import { UserDetail, PersonDetails } from "../../types/user.types";
 import {
   updateUserRegiStatusApi,
   updateUserBlockStatus,
-//   updateVerificationStatusApi,
+  //   updateVerificationStatusApi,
   deleteUserVerificationApi,
 } from "../../api/usersapi";
 import { useNavigate } from "react-router";
@@ -573,6 +573,7 @@ const PersonDetailsComp = ({
   const [loading, setLoading] = useState(false);
   const [imageModal, setImageModal] = useState<string | null>(null);
   const [zoom, setZoom] = useState(1);
+  const [historyModalOpen, setHistoryModalOpen] = useState(false);
 
   const openImageModal = (img: string) => {
     setImageModal(img);
@@ -958,28 +959,52 @@ const PersonDetailsComp = ({
             <h2 className="text-base font-bold text-gray-900 dark:text-white uppercase tracking-wider">
               Verification Details
             </h2>
-            {verification?._id && (
-              <button
-                onClick={handleDeleteVerification}
-                disabled={loading}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/30 hover:bg-rose-100 dark:hover:bg-rose-950/50 rounded-lg transition-colors disabled:opacity-50"
-              >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+            <div className="flex items-center gap-2">
+              {verification?.metadata?.history &&
+                verification.metadata.history.length > 0 && (
+                  <button
+                    onClick={() => setHistoryModalOpen(true)}
+                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-brand-500 hover:bg-brand-600 rounded-lg transition-colors shadow-md"
+                  >
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    View History
+                  </button>
+                )}
+              {verification?._id && (
+                <button
+                  onClick={handleDeleteVerification}
+                  disabled={loading}
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/30 hover:bg-rose-100 dark:hover:bg-rose-950/50 rounded-lg transition-colors disabled:opacity-50"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                  />
-                </svg>
-                Delete Verification
-              </button>
-            )}
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
+                  </svg>
+                  Delete Verification
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="space-y-6">
@@ -990,24 +1015,8 @@ const PersonDetailsComp = ({
                 value={safeVerification.overallStatus}
                 highlight
               />
-              <DetailItem
-                label="Attempts"
-                value={
-                  safeVerification.attempts !== undefined
-                    ? `${safeVerification.attempts}/${safeVerification.maxAttempts || 0}`
-                    : "-"
-                }
-              />
-              <DetailItem
-                label="Manual Review"
-                value={
-                  safeVerification.manualReview?.required
-                    ? "Required"
-                    : safeVerification.manualReview?.required === false
-                      ? "Not Required"
-                      : "-"
-                }
-              />
+             
+             
               <DetailItem
                 label="Submitted At"
                 value={
@@ -1051,12 +1060,7 @@ const PersonDetailsComp = ({
                   value={safeVerification.liveSelfieVerification?.status}
                   highlight
                 />
-                <DetailItem
-                  label="Confidence Score"
-                  value={
-                    safeVerification.liveSelfieVerification?.confidenceScore
-                  }
-                />
+
                 <DetailItem
                   label="Verified At"
                   value={
@@ -1069,10 +1073,6 @@ const PersonDetailsComp = ({
                         })
                       : "-"
                   }
-                />
-                <DetailItem
-                  label="OCR Text"
-                  value={safeVerification.liveSelfieVerification?.ocrText}
                 />
               </div>
               {safeVerification.liveSelfieVerification?.image ? (
@@ -1132,6 +1132,10 @@ const PersonDetailsComp = ({
                   highlight
                 />
                 <DetailItem
+                  label="Document Type"
+                  value={safeVerification.verifyId?.documentType}
+                />
+                <DetailItem
                   label="Verified At"
                   value={
                     safeVerification.verifyId?.verifiedAt
@@ -1149,7 +1153,7 @@ const PersonDetailsComp = ({
                   value={safeVerification.verifyId?.ocrText}
                 />
               </div>
-              {safeVerification.verifyId?.document ? (
+              {safeVerification.verifyId?.image ? (
                 <div>
                   <p className="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-wider mb-2">
                     ID Document
@@ -1158,12 +1162,12 @@ const PersonDetailsComp = ({
                     className="relative group w-32 h-32 cursor-pointer"
                     onClick={() =>
                       openImageModal(
-                        `${IMAGE_URL}/uploads/id/${safeVerification.verifyId.document}`,
+                        `${IMAGE_URL}/uploads/id/${safeVerification.verifyId.image}`,
                       )
                     }
                   >
                     <img
-                      src={`${IMAGE_URL}/uploads/id/${safeVerification.verifyId.document}`}
+                      src={`${IMAGE_URL}/uploads/id/${safeVerification.verifyId.image}`}
                       alt="ID Document"
                       className="w-32 h-32 object-cover rounded-lg border-2 border-gray-200 dark:border-gray-700 group-hover:border-brand-500 transition-colors"
                     />
@@ -1278,6 +1282,166 @@ const PersonDetailsComp = ({
                 style={{ transform: `scale(${zoom})` }}
                 className="max-w-full max-h-[80vh] object-contain transition-transform duration-200"
               />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Verification History Modal */}
+      {historyModalOpen && verification?.metadata?.history && (
+        <div
+          className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
+          onClick={() => setHistoryModalOpen(false)}
+        >
+          <div
+            className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                Verification History
+              </h3>
+              <button
+                onClick={() => setHistoryModalOpen(false)}
+                className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto max-h-[calc(80vh-80px)]">
+              {/* Metadata Summary */}
+              <div className="grid grid-cols-2 gap-4 mb-6 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                <div>
+                  <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Submission Date
+                  </p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">
+                    {verification.metadata.submissionDate
+                      ? new Date(
+                          verification.metadata.submissionDate,
+                        ).toLocaleString("en-US", {
+                          dateStyle: "medium",
+                          timeStyle: "short",
+                        })
+                      : "-"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Review Date
+                  </p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">
+                    {verification.metadata.reviewDate
+                      ? new Date(
+                          verification.metadata.reviewDate,
+                        ).toLocaleString("en-US", {
+                          dateStyle: "medium",
+                          timeStyle: "short",
+                        })
+                      : "-"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Admin Notes
+                  </p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">
+                    {verification.metadata.adminNotes || "-"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Rejection Reason
+                  </p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">
+                    {verification.metadata.rejectionReason || "-"}
+                  </p>
+                </div>
+              </div>
+
+              {/* History Timeline */}
+              <div className="space-y-4">
+                <h4 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider mb-3">
+                  Activity Timeline
+                </h4>
+                {verification.metadata.history
+                  .slice()
+                  .reverse()
+                  .map((item: any, index: number) => (
+                    <div
+                      key={item._id || index}
+                      className="relative pl-8 pb-4 border-l-2 border-gray-200 dark:border-gray-700 last:border-l-0 last:pb-0"
+                    >
+                      <div
+                        className={`absolute left-0 top-0 w-4 h-4 rounded-full -translate-x-[9px] ${
+                          item.status === "Approved"
+                            ? "bg-emerald-500"
+                            : item.status === "Rejected"
+                              ? "bg-rose-500"
+                              : item.status === "Under Review"
+                                ? "bg-amber-500"
+                                : item.status === "Verification Requested"
+                                  ? "bg-blue-500"
+                                  : "bg-gray-400"
+                        }`}
+                      ></div>
+                      <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <span
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                              item.status === "Approved"
+                                ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400"
+                                : item.status === "Rejected"
+                                  ? "bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-400"
+                                  : item.status === "Under Review"
+                                    ? "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400"
+                                    : item.status === "Verification Requested"
+                                      ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400"
+                                      : "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
+                            }`}
+                          >
+                            {item.status}
+                          </span>
+                          <span className="text-xs text-gray-500 dark:text-gray-400">
+                            {item.date
+                              ? new Date(item.date).toLocaleString("en-US", {
+                                  month: "short",
+                                  day: "numeric",
+                                  year: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                })
+                              : "-"}
+                          </span>
+                        </div>
+                        {item.action && (
+                          <p className="text-sm text-gray-700 dark:text-gray-300 mb-1">
+                            <span className="font-medium">Action:</span>{" "}
+                            {item.action}
+                          </p>
+                        )}
+                        {item.reason && (
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            <span className="font-medium">Reason:</span>{" "}
+                            {item.reason}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+              </div>
             </div>
           </div>
         </div>
