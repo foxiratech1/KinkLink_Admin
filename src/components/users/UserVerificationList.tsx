@@ -16,13 +16,14 @@ const IMAGE_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/uploads/profileImag
 
 const getVerificationImage = (user: VerificationUser): string | null => {
     if (user.liveSelfieVerification?.image) return user.liveSelfieVerification.image;
+    if (typeof user.selfieImage === "string") return user.selfieImage;
     if (user.selfieImage?.image) return user.selfieImage.image;
     return null;
 };
 
 
 interface UserVerificationListProps {
-    status: "Approved" | "Rejected" | "Pending"; // "Approved" for verified, "Rejected" for unverified (or could be "Pending" depending on requirement clarification)
+    status?: "Approved" | "Rejected" | "Pending" | "Verification Requested" | "Verification Suspended" | "Not Verified" | "Under Review";
 }
 
 const UserVerificationList = ({ status }: UserVerificationListProps) => {
@@ -90,7 +91,7 @@ const UserVerificationList = ({ status }: UserVerificationListProps) => {
                 </div>
             ) : users.length === 0 ? (
                 <div className="py-12 text-center text-gray-500 dark:text-gray-400">
-                    No {status.toLowerCase()} verification requests found
+                    No {status?.toLowerCase() || "verification"} requests found
                 </div>
             ) : (
                 <div className="overflow-x-auto">
@@ -120,6 +121,12 @@ const UserVerificationList = ({ status }: UserVerificationListProps) => {
                                     className="px-6 py-3 text-xs font-medium uppercase"
                                 >
                                     Type
+                                </TableCell>
+                                <TableCell
+                                    isHeader
+                                    className="px-6 py-3 text-xs font-medium uppercase"
+                                >
+                                    Registration
                                 </TableCell>
                                 <TableCell
                                     isHeader
@@ -171,16 +178,23 @@ const UserVerificationList = ({ status }: UserVerificationListProps) => {
                                         {item.user.email}
                                     </TableCell>
                                     <TableCell className="px-6 py-4 text-sm text-gray-500">
+                                        <span className={`rounded-full px-2 py-1 text-xs font-semibold ${item.user.role === "Person"
+                                            ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+                                            : "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200"
+                                            }`}>{item.user.role || "-"}</span>
+
+                                    </TableCell>
+                                    <TableCell className="px-6 py-4 text-sm text-gray-500">
                                         {item.user.registrationRole || "-"}
                                     </TableCell>
                                     <TableCell className="px-6 py-4 text-sm text-gray-500">
-                                        {new Date(item.submittedAt).toLocaleDateString()}
+                                        {item.submittedAt ? new Date(item.submittedAt).toLocaleDateString() : "-"}
                                     </TableCell>
                                     <TableCell className="px-6 py-4 text-sm">
                                         <span
                                             className={`rounded-full px-2 py-1 text-xs font-semibold ${item.overallStatus === "Approved"
                                                 ? "bg-green-100 text-green-800"
-                                                : item.overallStatus === "Pending"
+                                                : item.overallStatus === "Under Review"
                                                     ? "bg-yellow-100 text-yellow-800"
                                                     : "bg-red-100 text-red-800"
                                                 }`}

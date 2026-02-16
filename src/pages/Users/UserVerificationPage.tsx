@@ -2,10 +2,10 @@ import { useState } from "react";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import UserVerificationList from "../../components/users/UserVerificationList";
 
-type TabType = "Verified" | "Unverified" | "Pending";
+type TabType = "All" | "Verified" | "Verification Requested" | "Under Review" | "Rejected" | "Verification Suspended";
 
 const UserVerificationPage = () => {
-    const [activeTab, setActiveTab] = useState<TabType>("Verified");
+    const [activeTab, setActiveTab] = useState<TabType>("All");
 
     return (
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 rounded-lg">
@@ -16,55 +16,74 @@ const UserVerificationPage = () => {
 
             <div className="rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900">
                 {/* TABS */}
-                <div className="border-b border-gray-200 px-6 pt-4 dark:border-gray-700">
-                    <div className="flex gap-4">
+                <div className="border-b border-gray-200 px-6 pt-4 dark:border-gray-700 overflow-x-auto">
+                    <div className="flex gap-4 min-w-max">
+                        <button
+                            onClick={() => setActiveTab("All")}
+                            className={`px-4 py-2 font-medium transition-colors whitespace-nowrap ${activeTab === "All"
+                                ? "border-b-2 border-brand-500 text-brand-600 dark:text-brand-400"
+                                : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
+                                }`}
+                        >
+                            All Users
+                        </button>
                         <button
                             onClick={() => setActiveTab("Verified")}
-                            className={`px-4 py-2 font-medium transition-colors ${activeTab === "Verified"
+                            className={`px-4 py-2 font-medium transition-colors whitespace-nowrap ${activeTab === "Verified"
                                 ? "border-b-2 border-brand-500 text-brand-600 dark:text-brand-400"
                                 : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
                                 }`}
                         >
-                            Verified Users
-                        </button>
-                        {/* <button
-                            onClick={() => setActiveTab("Manual_Review")}
-                            className={`px-4 py-2 font-medium transition-colors ${activeTab === "Manual_Review"
-                                ? "border-b-2 border-brand-500 text-brand-600 dark:text-brand-400"
-                                : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
-                                }`}
-                        >
-                            Manual Review
-                        </button> */}
-                        <button
-                            onClick={() => setActiveTab("Pending")}
-                            className={`px-4 py-2 font-medium transition-colors ${activeTab === "Pending"
-                                ? "border-b-2 border-brand-500 text-brand-600 dark:text-brand-400"
-                                : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
-                                }`}
-                        >
-                            Pending Users
+                            Verified
                         </button>
                         <button
-                            onClick={() => setActiveTab("Unverified")}
-                            className={`px-4 py-2 font-medium transition-colors ${activeTab === "Unverified"
+                            onClick={() => setActiveTab("Verification Requested")}
+                            className={`px-4 py-2 font-medium transition-colors whitespace-nowrap ${activeTab === "Verification Requested"
                                 ? "border-b-2 border-brand-500 text-brand-600 dark:text-brand-400"
                                 : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
                                 }`}
                         >
-                            Unverified/Rejected Users
+                            Verification Requested
+                        </button>
+                        <button
+                            onClick={() => setActiveTab("Under Review")}
+                            className={`px-4 py-2 font-medium transition-colors whitespace-nowrap ${activeTab === "Under Review"
+                                ? "border-b-2 border-brand-500 text-brand-600 dark:text-brand-400"
+                                : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
+                                }`}
+                        >
+                            Under Review
+                        </button>
+                        <button
+                            onClick={() => setActiveTab("Rejected")}
+                            className={`px-4 py-2 font-medium transition-colors whitespace-nowrap ${activeTab === "Rejected"
+                                ? "border-b-2 border-brand-500 text-brand-600 dark:text-brand-400"
+                                : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
+                                }`}
+                        >
+                            Rejected
+                        </button>
+                        <button
+                            onClick={() => setActiveTab("Verification Suspended")}
+                            className={`px-4 py-2 font-medium transition-colors whitespace-nowrap ${activeTab === "Verification Suspended"
+                                ? "border-b-2 border-brand-500 text-brand-600 dark:text-brand-400"
+                                : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
+                                }`}
+                        >
+                            Suspended
                         </button>
                     </div>
                 </div>
 
                 {/* CONTENT */}
-                {activeTab === "Verified" ? (
-                    <UserVerificationList status="Approved" />
-                ) : activeTab === "Pending" ? (
-                    <UserVerificationList status="Pending" />
-                ) : (
-                    <UserVerificationList status="Rejected" />
-                )}
+                <div className="p-1">
+                    {activeTab === "All" && <UserVerificationList />}
+                    {activeTab === "Verified" && <UserVerificationList status="Approved" />}
+                    {activeTab === "Verification Requested" && <UserVerificationList status="Verification Requested" />}
+                    {activeTab === "Under Review" && <UserVerificationList status="Under Review" />}
+                    {activeTab === "Rejected" && <UserVerificationList status="Rejected" />}
+                    {activeTab === "Verification Suspended" && <UserVerificationList status="Verification Suspended" />}
+                </div>
 
             </div>
         </div>

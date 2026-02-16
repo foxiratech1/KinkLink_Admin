@@ -76,42 +76,52 @@ export type UserDetail = {
 };
 
 // Person profile types
-export type PersonDetails = {
 
+export type PersonDetails = {
+    _id: string;
+    userId: string;
     profileImg?: string;
+
     lookingFor: {
         ageRange: {
             min: number;
             max: number;
         };
-        targets: string[]; // ["F", "M", "FF", "MM", etc.]
+        targets: string[];
     };
-    _id: string;
-    userId: string;
+
+    locations?: {
+        country: string;
+        city: string;
+    };
+
     details: Array<{
+        dob?: string;
+        status?: string;
+        name?: string;
         height?: string;
+        bodyType?: string;
+        smoking?: string;
         sexuality?: string;
         drinking?: string;
         tattoos?: string;
         piercings?: string;
         _id: string;
     }>;
+
     aboutMe?: string;
     hostingStatus?: string;
     travelStatus?: string;
+
+    interests: string[]; // <-- FIXED
     badges: string[];
-    interests: Array<{
-        interestId: string;
-        interestName: string;
-        _id: string;
-    }>;
 
     isProfileComplete: boolean;
     isDeleted: boolean;
     createdAt: string;
     updatedAt: string;
-    __v: number;
 };
+
 
 // Business profile types
 export type BusinessDetails = {
@@ -143,34 +153,63 @@ export type VerificationUser = {
         _id: string;
         email: string;
         name: string;
+        role: string;
         registrationRole: string;
+        type: string;
         isVerified: boolean;
     };
     attempts: number;
-    overallStatus: "Approved" | "Rejected" | "Pending";
+    overallStatus:
+    | "Approved"
+    | "Rejected"
+    | "Verification Requested"
+    | "Verification Suspended"
+    | "Not Verified"
+    | "Under Review";
     isDeleted: boolean;
-    submittedAt: string;
-    lastUpdatedAt: string;
-    liveSelfieVerification: {
+    submittedAt?: string;
+    lastUpdatedAt?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    isSelfieCompleted?: boolean;
+    isIdRequired?: boolean;
+    metadata?: {
+        history: Array<{
+            status: string;
+            action: string;
+            date: string;
+            reason?: string;
+            _id: string;
+            notes?: string;
+            updatedBy?: string;
+            timestamp?: string; // Handle both date formats if needed
+        }>;
+        submissionDate?: string;
+        reviewDate?: string;
+        adminNotes?: string;
+        reviewedBy?: string;
+        rejectionReason?: string;
+    };
+    liveSelfieVerification?: {
         image: string;
         status: string;
         verifiedAt: string;
         failureReason: string | null;
     };
-    selfieImage: {
+    selfieImage?: {
         image: string;
         status: string;
         uploadedAt: string;
         approvedAt: string;
         rejectedAt: string | null;
         rejectionReason: string | null;
-    };
-    verifyId: {
-        document: string;
+    } | string; // Allow string for Business JSON
+    verifyId?: {
+        document?: string;
         status: string;
-        verifiedAt: string;
-        failureReason: string | null;
-        ocrText: string;
+        verifiedAt?: string;
+        failureReason?: string | null;
+        ocrText?: string;
     };
 };
 
@@ -191,6 +230,6 @@ export type GetUserVerificationsResponse = {
 export type GetUserVerificationsParams = {
     page?: number;
     limit?: number;
-    status?: "Approved" | "Rejected" | "Pending" | "Manual_Review";
+    status?: "Approved" | "Rejected" | "Pending" | "Verification Requested" | "Verification Suspended" | "Not Verified" | "Under Review";
     search?: string;
 };
