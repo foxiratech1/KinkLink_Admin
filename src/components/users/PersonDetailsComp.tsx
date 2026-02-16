@@ -51,6 +51,9 @@ const PersonDetailsComp = ({
   const [imageModal, setImageModal] = useState<string | null>(null);
   const [zoom, setZoom] = useState(1);
   const [historyModalOpen, setHistoryModalOpen] = useState(false);
+  const [rejectModalOpen, setRejectModalOpen] = useState(false);
+  const [rejectionReason, setRejectionReason] = useState("");
+
 
   const openImageModal = (img: string) => {
     setImageModal(img);
@@ -78,15 +81,45 @@ const PersonDetailsComp = ({
     }
   };
 
-  const handleReject = async () => {
+  // const handleReject = async () => {
+  //   if (!verification?._id) {
+  //     toast.error("Verification ID not found");
+  //     return;
+  //   }
+  //   setLoading(true);
+  //   try {
+  //     await updateUserRegiStatusApi(user._id, verification._id, "Reject");
+  //     toast.success("User rejected successfully");
+  //     onUpdate();
+  //   } catch (err: any) {
+  //     toast.error(err?.response?.data?.message || "Failed");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+  const handleRejectConfirm = async () => {
     if (!verification?._id) {
       toast.error("Verification ID not found");
       return;
     }
+
+    if (!rejectionReason.trim()) {
+      toast.error("Please enter rejection reason");
+      return;
+    }
+
     setLoading(true);
     try {
-      await updateUserRegiStatusApi(user._id, verification._id, "Reject");
+      await updateUserRegiStatusApi(
+        user._id,
+        verification._id,
+        "Reject",
+        rejectionReason
+      );
+
       toast.success("User rejected successfully");
+      setRejectModalOpen(false);
+      setRejectionReason("");
       onUpdate();
     } catch (err: any) {
       toast.error(err?.response?.data?.message || "Failed");
@@ -491,7 +524,7 @@ const PersonDetailsComp = ({
                 <div className="flex gap-2">
                   {safeVerification.overallStatus === "Approved" && (
                     <button
-                      onClick={handleReject}
+                      onClick={() => setRejectModalOpen(true)}
                       disabled={loading}
                       className="px-3 py-1.5 text-xs font-medium text-white bg-rose-500 hover:bg-rose-600 rounded-lg transition-colors disabled:opacity-50"
                     >
@@ -518,7 +551,7 @@ const PersonDetailsComp = ({
                         Approve
                       </button>
                       <button
-                        onClick={handleReject}
+                        onClick={() => setRejectModalOpen(true)}
                         disabled={loading}
                         className="px-3 py-1.5 text-xs font-medium text-white bg-rose-500 hover:bg-rose-600 rounded-lg transition-colors disabled:opacity-50"
                       >
@@ -570,7 +603,7 @@ const PersonDetailsComp = ({
                 <div className="flex gap-2">
                   {safeVerification.overallStatus === "Approved" ? (
                     <button
-                      onClick={handleReject}
+                      onClick={() => setRejectModalOpen(true)}
                       disabled={loading}
                       className="px-3 py-1.5 text-xs font-medium text-white bg-rose-500 hover:bg-rose-600 rounded-lg transition-colors disabled:opacity-50"
                     >
@@ -594,7 +627,7 @@ const PersonDetailsComp = ({
                         Approve
                       </button>
                       <button
-                        onClick={handleReject}
+                        onClick={() => setRejectModalOpen(true)}
                         disabled={loading}
                         className="px-3 py-1.5 text-xs font-medium text-white bg-rose-500 hover:bg-rose-600 rounded-lg transition-colors disabled:opacity-50"
                       >
@@ -721,6 +754,46 @@ const PersonDetailsComp = ({
           </div>
         </div>
       )}
+
+
+      {rejectModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md p-6">
+            <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
+              Reject Verification
+            </h3>
+
+            <textarea
+              value={rejectionReason}
+              onChange={(e) => setRejectionReason(e.target.value)}
+              placeholder="Enter rejection reason..."
+              className="w-full border rounded-lg p-3 text-sm dark:bg-gray-700 dark:text-white"
+              rows={4}
+            />
+
+            <div className="flex justify-end gap-3 mt-4">
+              <button
+                onClick={() => {
+                  setRejectModalOpen(false);
+                  setRejectionReason("");
+                }}
+                className="px-4 py-2 text-sm rounded-lg bg-gray-200 hover:bg-gray-300"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={handleRejectConfirm}
+                disabled={loading}
+                className="px-4 py-2 text-sm rounded-lg bg-rose-500 text-white hover:bg-rose-600 disabled:opacity-50"
+              >
+                {loading ? "Rejecting..." : "Reject"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
 
       {/* Verification History Modal */}
       {historyModalOpen && verification && (
