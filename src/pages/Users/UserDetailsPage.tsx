@@ -98,17 +98,7 @@ const UserDetailsPage = () => {
     return (
         <div className="min-h-screen bg-white dark:bg-gray-950">
             {/* Request Verification Button */}
-            <div className="flex justify-end px-4 py-4">
-                <button
-                    onClick={() => setIsRequestModalOpen(true)}
-                    className="flex items-center gap-2 px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white font-medium rounded-lg transition-colors"
-                >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    Request Verification
-                </button>
-            </div>
+
 
             {/* Request Verification Modal */}
             {isRequestModalOpen && (
@@ -178,6 +168,17 @@ const UserDetailsPage = () => {
                     </div>
                 </div>
             )}
+            <div className="flex justify-end px-4 py-4">
+                <button
+                    onClick={() => setIsRequestModalOpen(true)}
+                    className="flex items-center gap-2 px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white font-medium rounded-lg transition-colors"
+                >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Request Verification
+                </button>
+            </div>
         </div>
     );
 };

@@ -405,16 +405,39 @@ const PersonDetailsComp = ({
               Verification Details
             </h2>
 
-            {verification?._id && (
-
-              <button
-                onClick={handleDeleteVerification}
-                disabled={loading}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/30 hover:bg-rose-100 dark:hover:bg-rose-950/50 rounded-lg transition-colors disabled:opacity-50"
-              >
-                Delete Verification
-              </button>
-            )}
+            <div className="flex items-center gap-2">
+              {verification?.metadata?.history &&
+                verification.metadata.history.length > 0 && (
+                  <button
+                    onClick={() => setHistoryModalOpen(true)}
+                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-brand-500 hover:bg-brand-600 rounded-lg transition-colors shadow-md"
+                  >
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    View History
+                  </button>
+                )}
+              {verification?._id && (
+                <button
+                  onClick={handleDeleteVerification}
+                  disabled={loading}
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/30 hover:bg-rose-100 dark:hover:bg-rose-950/50 rounded-lg transition-colors disabled:opacity-50"
+                >
+                  Delete Verification
+                </button>
+              )}
+            </div>
 
           </div>
 
@@ -621,6 +644,7 @@ const PersonDetailsComp = ({
 
       </div>
 
+
       {/* Image Modal */}
       {imageModal && (
         <div
@@ -699,7 +723,6 @@ const PersonDetailsComp = ({
         </div>
       )}
 
-      {/* Verification History Modal */}
       {/* Verification History Modal */}
       {historyModalOpen && verification && (
         <VerificationHistoryComp
