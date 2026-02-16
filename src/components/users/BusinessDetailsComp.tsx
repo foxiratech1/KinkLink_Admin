@@ -146,7 +146,7 @@ const BusinessDetailsComp = ({ user, businessProfile, verification, onUpdate }: 
             toast.success(newBlockStatus ? "Business blocked successfully" : "Business unblocked successfully");
             onUpdate();
         } catch (error: any) {
-            toast.error(error?.response?.data?.message || "Failed to update block status");
+            toast.error(error?.response?.data?.message || "Failed to update block status !");
         } finally {
             setLoading(false);
         }
