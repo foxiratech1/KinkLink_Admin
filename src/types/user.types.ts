@@ -60,6 +60,7 @@ export type UserDetail = {
     verificationId: string;
     email: string;
     role: "Person" | "Business";
+    overallStatus: "Approved" | "Verification Requested" | "Rejected" | "Under Review" | "Verification Suspended";
     username?: string;
     name?: string;
     registrationRole?: "Male" | "Female" | null;
@@ -158,6 +159,7 @@ export type VerificationUser = {
         type: string;
         isVerified: boolean;
     };
+    businessName: string;
     attempts: number;
     overallStatus:
     | "Approved"
@@ -182,7 +184,7 @@ export type VerificationUser = {
             _id: string;
             notes?: string;
             updatedBy?: string;
-            timestamp?: string; // Handle both date formats if needed
+            timestamp?: string;
         }>;
         submissionDate?: string;
         reviewDate?: string;

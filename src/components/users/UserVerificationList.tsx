@@ -11,6 +11,7 @@ import {
     TableRow,
 } from "../ui/table";
 import Pagination from "../ui/pagination/Pagination";
+import Avatar from "../ui/avatar/Avatar";
 
 const IMAGE_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/uploads/profileImage/`;
 
@@ -109,6 +110,7 @@ const UserVerificationList = ({ status }: UserVerificationListProps) => {
                                     className="px-6 py-3 text-xs font-medium uppercase"
                                 >
                                     Name
+
                                 </TableCell>
                                 <TableCell
                                     isHeader
@@ -157,22 +159,22 @@ const UserVerificationList = ({ status }: UserVerificationListProps) => {
                                     className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
                                 >
                                     <TableCell className="px-6 py-4">
-                                        <img
+                                        <Avatar
                                             src={
                                                 getVerificationImage(item)
                                                     ? `${IMAGE_BASE_URL}${getVerificationImage(item)}`
-                                                    : "/images/avatar-placeholder.png"
+                                                    : null
                                             }
-                                            alt="profile"
-                                            className="h-9 w-9 rounded-full object-cover border"
-                                            onError={(e) => {
-                                                (e.target as HTMLImageElement).src =
-                                                    "/images/avatar-placeholder.png";
-                                            }}
+                                            name={item.user?.name || item.user?.email}
+                                            size="small"
                                         />
+
                                     </TableCell>
                                     <TableCell className="px-6 py-4 text-sm">
-                                        {item.user.name || "-"}
+                                        {item.user.role === "Business"
+                                            ? item.businessName || "-"
+                                            : item.user.name || "-"}
+
                                     </TableCell>
                                     <TableCell className="px-6 py-4 text-sm">
                                         {item.user.email}
@@ -188,7 +190,7 @@ const UserVerificationList = ({ status }: UserVerificationListProps) => {
                                         {item.user.registrationRole || "-"}
                                     </TableCell>
                                     <TableCell className="px-6 py-4 text-sm text-gray-500">
-                                        {item.submittedAt ? new Date(item.submittedAt).toLocaleDateString() : "-"}
+                                        {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : "-"}
                                     </TableCell>
                                     <TableCell className="px-6 py-4 text-sm">
                                         <span

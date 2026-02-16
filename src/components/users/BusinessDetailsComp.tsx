@@ -118,14 +118,24 @@ const BusinessDetailsComp = ({ user, businessProfile, verification, onUpdate }: 
         }
     };
 
-    const getStatusColor = (status: string) => {
+    const getStatusColor = (status?: string) => {
         switch (status) {
-            case "Approve":
+            case "Approved":
                 return "bg-emerald-50 text-emerald-700 border border-emerald-200";
-            case "Pending":
-                return "bg-amber-50 text-amber-700 border border-amber-200";
-            case "Reject":
+
+            case "Rejected":
                 return "bg-rose-50 text-rose-700 border border-rose-200";
+
+            case "Under Review":
+            case "Verification Requested":
+                return "bg-amber-50 text-amber-700 border border-amber-200";
+
+            case "Verification Suspended":
+                return "bg-purple-50 text-purple-700 border border-purple-200";
+
+            case "Not Verified":
+                return "bg-gray-100 text-gray-700 border border-gray-300";
+
             default:
                 return "bg-gray-50 text-gray-700 border border-gray-200";
         }
@@ -145,13 +155,13 @@ const BusinessDetailsComp = ({ user, businessProfile, verification, onUpdate }: 
         });
     };
 
-    const formatDateTime = (dateString?: string) => {
-        if (!dateString) return "-";
-        return new Date(dateString).toLocaleString('en-US', {
-            dateStyle: 'medium',
-            timeStyle: 'short'
-        });
-    };
+    // const formatDateTime = (dateString?: string) => {
+    //     if (!dateString) return "-";
+    //     return new Date(dateString).toLocaleString('en-US', {
+    //         dateStyle: 'medium',
+    //         timeStyle: 'short'
+    //     });
+    // };
 
     const safeVerification = verification || {};
     console.log("Verification prop:", verification);
@@ -196,8 +206,8 @@ const BusinessDetailsComp = ({ user, businessProfile, verification, onUpdate }: 
                         <h2 className="text-base font-bold text-gray-900 dark:text-white uppercase tracking-wider">
                             User Information
                         </h2>
-                        <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium ${getStatusColor(user.status)}`}>
-                            {user.status}
+                        <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium ${getStatusColor(verification?.overallStatus)}`}>
+                            {verification?.overallStatus}
                         </span>
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
@@ -236,241 +246,248 @@ const BusinessDetailsComp = ({ user, businessProfile, verification, onUpdate }: 
                     </div>
                 </div>
 
-                {/* Verification Section */}
-                {verification && (
-                    <div className="border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-6 py-6">
-                        <div className="flex items-center justify-between mb-5">
-                            <h2 className="text-base font-bold text-gray-900 dark:text-white uppercase tracking-wider">
-                                Verification Details
-                            </h2>
-                            <div className="flex items-center gap-2">
-                                {verification?.metadata?.history &&
-                                    verification.metadata.history.length > 0 && (
-                                        <button
-                                            onClick={() => setHistoryModalOpen(true)}
-                                            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-brand-500 hover:bg-brand-600 rounded-lg transition-colors shadow-md"
-                                        >
-                                            <svg
-                                                className="w-4 h-4"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth={2}
-                                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                                                />
-                                            </svg>
-                                            View History
-                                        </button>
-                                    )}
-                                {verification?._id && (
+
+                <div className="bg-white dark:bg-gray-900 px-6 py-6">
+                    <div className="flex items-center justify-between mb-5">
+                        <h2 className="text-base font-bold text-gray-900 dark:text-white uppercase tracking-wider">
+                            Verification Details
+                        </h2>
+
+                        <div className="flex items-center gap-2">
+                            {verification?.metadata?.history &&
+                                verification.metadata.history.length > 0 && (
                                     <button
-                                        onClick={handleDeleteVerification}
-                                        disabled={loading}
-                                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/30 hover:bg-rose-100 dark:hover:bg-rose-950/50 rounded-lg transition-colors disabled:opacity-50"
+                                        onClick={() => setHistoryModalOpen(true)}
+                                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-brand-500 hover:bg-brand-600 rounded-lg transition-colors shadow-md"
                                     >
-                                        Delete Verification
+                                        <svg
+                                            className="w-4 h-4"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                                            />
+                                        </svg>
+                                        View History
                                     </button>
                                 )}
-                            </div>
-                        </div>
-
-                        <div className="space-y-6">
-                            {/* Verification Basic Info */}
-                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                                <DetailItem label="Overall Status" value={verification.overallStatus} highlight />
-                                <DetailItem label="Verification ID" value={verification._id} />
-                                <DetailItem label="Attempts" value={verification.attempts} />
-                                <DetailItem label="Submitted At" value={formatDateTime(verification.submittedAt || verification.createdAt || verification.metadata?.submissionDate)} />
-                                <DetailItem label="Last Updated" value={formatDateTime(verification.lastUpdatedAt || verification.updatedAt)} />
-                            </div>
-
-                            {/* Live Selfie Verification */}
-                            {(verification?.selfieImage || verification?.isSelfieCompleted) && (
-                                <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-5 space-y-4">
-                                    <div className="flex justify-between items-center">
-                                        <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            </svg>
-                                            Live Selfie Verification
-                                        </h3>
-                                        <div className="flex gap-2">
-                                            {safeVerification.overallStatus === "Approved" && (
-                                                <button
-                                                    onClick={handleReject}
-                                                    disabled={loading}
-                                                    className="px-3 py-1.5 text-xs font-medium text-white bg-rose-500 hover:bg-rose-600 rounded-lg transition-colors disabled:opacity-50"
-                                                >
-                                                    Reject
-                                                </button>
-                                            )}
-                                            {safeVerification.overallStatus === "Rejected" && (
-                                                <button
-                                                    onClick={handleApprove}
-                                                    disabled={loading}
-                                                    className="px-3 py-1.5 text-xs font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors disabled:opacity-50"
-                                                >
-                                                    Approve
-                                                </button>
-                                            )}
-                                            {safeVerification.overallStatus === "Pending" && (
-                                                <>
-                                                    <button
-                                                        onClick={handleApprove}
-                                                        disabled={loading}
-                                                        className="px-3 py-1.5 text-xs font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors disabled:opacity-50"
-                                                    >
-                                                        Approve
-                                                    </button>
-                                                    <button
-                                                        onClick={handleReject}
-                                                        disabled={loading}
-                                                        className="px-3 py-1.5 text-xs font-medium text-white bg-rose-500 hover:bg-rose-600 rounded-lg transition-colors disabled:opacity-50"
-                                                    >
-                                                        Reject
-                                                    </button>
-                                                </>
-                                            )}
-                                        </div>
-                                    </div>
-                                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                                        <DetailItem label="Status" value={verification.isSelfieCompleted ? "Completed" : "Pending"} highlight />
-                                    </div>
-                                    {typeof verification.selfieImage === "string" ? (
-                                        <div>
-                                            <p className="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-wider mb-2">
-                                                Selfie Image
-                                            </p>
-                                            <div
-                                                className="relative group w-32 h-32 cursor-pointer"
-                                                onClick={() => openImageModal(`${IMAGE_URL}/uploads/selfie/${verification.selfieImage}`)}
-                                            >
-                                                <img
-                                                    src={`${IMAGE_URL}/uploads/selfie/${verification.selfieImage}`}
-                                                    alt="Selfie"
-                                                    className="w-32 h-32 object-cover rounded-lg border-2 border-gray-200 dark:border-gray-700 group-hover:border-brand-500 transition-colors"
-                                                />
-                                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
-                                                    <span className="text-white text-xs font-medium">Zoom</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ) : verification.selfieImage?.image ? (
-                                        <div>
-                                            <p className="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-wider mb-2">
-                                                Selfie Image
-                                            </p>
-                                            <div
-                                                className="relative group w-32 h-32 cursor-pointer"
-                                                onClick={() => openImageModal(`${IMAGE_URL}/uploads/selfie/${verification.selfieImage.image}`)}
-                                            >
-                                                <img
-                                                    src={`${IMAGE_URL}/uploads/selfie/${verification.selfieImage.image}`}
-                                                    alt="Selfie"
-                                                    className="w-32 h-32 object-cover rounded-lg border-2 border-gray-200 dark:border-gray-700 group-hover:border-brand-500 transition-colors"
-                                                />
-                                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
-                                                    <span className="text-white text-xs font-medium">Zoom</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                                            No selfie image available
-                                        </p>
-                                    )}
-                                </div>
-                            )}
-
-                            {/* ID Verification */}
-                            {verification?.verifyId && (
-                                <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-5 space-y-4">
-                                    <div className="flex justify-between items-center">
-                                        <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
-                                            </svg>
-                                            ID Verification
-                                        </h3>
-                                        <div className="flex gap-2">
-                                            {safeVerification.overallStatus === "Approved" && (
-                                                <button
-                                                    onClick={handleReject}
-                                                    disabled={loading}
-                                                    className="px-3 py-1.5 text-xs font-medium text-white bg-rose-500 hover:bg-rose-600 rounded-lg transition-colors disabled:opacity-50"
-                                                >
-                                                    Reject
-                                                </button>
-                                            )}
-                                            {safeVerification.overallStatus === "Rejected" && (
-                                                <button
-                                                    onClick={handleApprove}
-                                                    disabled={loading}
-                                                    className="px-3 py-1.5 text-xs font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors disabled:opacity-50"
-                                                >
-                                                    Approve
-                                                </button>
-                                            )}
-                                            {safeVerification.overallStatus === "Pending" && (
-                                                <>
-                                                    <button
-                                                        onClick={handleApprove}
-                                                        disabled={loading}
-                                                        className="px-3 py-1.5 text-xs font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors disabled:opacity-50"
-                                                    >
-                                                        Approve
-                                                    </button>
-                                                    <button
-                                                        onClick={handleReject}
-                                                        disabled={loading}
-                                                        className="px-3 py-1.5 text-xs font-medium text-white bg-rose-500 hover:bg-rose-600 rounded-lg transition-colors disabled:opacity-50"
-                                                    >
-                                                        Reject
-                                                    </button>
-                                                </>
-                                            )}
-                                        </div>
-                                    </div>
-                                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                                        <DetailItem label="Status" value={verification.verifyId.status} highlight />
-                                        <DetailItem label="Verified At" value={formatDateTime(verification.verifyId.verifiedAt)} />
-                                        <DetailItem label="Failure Reason" value={verification.verifyId.failureReason} />
-                                        <DetailItem label="OCR Text" value={verification.verifyId.ocrText} />
-                                    </div>
-                                    {verification.verifyId.document ? (
-                                        <div>
-                                            <p className="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-wider mb-2">
-                                                ID Document
-                                            </p>
-                                            <div
-                                                className="relative group w-32 h-32 cursor-pointer"
-                                                onClick={() => openImageModal(`${IMAGE_URL}/uploads/id/${verification.verifyId.document}`)}
-                                            >
-                                                <img
-                                                    src={`${IMAGE_URL}/uploads/id/${verification.verifyId.document}`}
-                                                    alt="ID Document"
-                                                    className="w-32 h-32 object-cover rounded-lg border-2 border-gray-200 dark:border-gray-700 group-hover:border-brand-500 transition-colors"
-                                                />
-                                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
-                                                    <span className="text-white text-xs font-medium">Zoom</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                                            No ID document available
-                                        </p>
-                                    )}
-                                </div>
+                            {verification?._id && (
+                                <button
+                                    onClick={handleDeleteVerification}
+                                    disabled={loading}
+                                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/30 hover:bg-rose-100 dark:hover:bg-rose-950/50 rounded-lg transition-colors disabled:opacity-50"
+                                >
+                                    Delete Verification
+                                </button>
                             )}
                         </div>
+
                     </div>
-                )}
+
+                    <div className="space-y-6">
+                        {/* Overall Info */}
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                            <DetailItem
+                                label="Submitted At"
+                                value={
+                                    verification?.metadata?.submissionDate
+                                        ? new Date(verification.metadata.submissionDate).toLocaleString("en-US", {
+                                            dateStyle: "medium",
+                                            timeStyle: "short",
+                                        })
+                                        : "-"
+                                }
+                            />
+
+                            <DetailItem
+                                label="Last Updated"
+                                value={
+                                    verification?.updatedAt
+                                        ? new Date(verification.updatedAt).toLocaleString("en-US", {
+                                            dateStyle: "medium",
+                                            timeStyle: "short",
+                                        })
+                                        : "-"
+                                }
+                            />
+
+                            <DetailItem
+                                label="ID Required"
+                                value={verification?.isIdRequired ? "Yes" : "No"}
+                            />
+
+                            <DetailItem
+                                label="Selfie Completed"
+                                value={verification?.isSelfieCompleted ? "Yes" : "No"}
+                            />
+
+
+                        </div>
+
+
+                        {/* Live Selfie Verification */}
+                        <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-5 space-y-4">
+                            <div className="flex justify-between items-center">
+                                <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">
+                                    Live Selfie Verification
+                                </h3>
+                                <div className="flex gap-2">
+                                    {safeVerification.overallStatus === "Approved" && (
+                                        <button
+                                            onClick={handleReject}
+                                            disabled={loading}
+                                            className="px-3 py-1.5 text-xs font-medium text-white bg-rose-500 hover:bg-rose-600 rounded-lg transition-colors disabled:opacity-50"
+                                        >
+                                            Reject
+                                        </button>
+                                    )}
+                                    {safeVerification.overallStatus === "Rejected" && (
+                                        <button
+                                            onClick={handleApprove}
+                                            disabled={loading}
+                                            className="px-3 py-1.5 text-xs font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors disabled:opacity-50"
+                                        >
+                                            Approve
+                                        </button>
+                                    )}
+                                    {["Under Review", "Verification Requested"].includes(safeVerification.overallStatus) && (
+
+                                        <>
+                                            <button
+                                                onClick={handleApprove}
+                                                disabled={loading}
+                                                className="px-3 py-1.5 text-xs font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors disabled:opacity-50"
+                                            >
+                                                Approve
+                                            </button>
+                                            <button
+                                                onClick={handleReject}
+                                                disabled={loading}
+                                                className="px-3 py-1.5 text-xs font-medium text-white bg-rose-500 hover:bg-rose-600 rounded-lg transition-colors disabled:opacity-50"
+                                            >
+                                                Reject
+                                            </button>
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+
+
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                                <DetailItem
+                                    label="Status"
+                                    value={verification?.isSelfieCompleted ? "Completed" : "Pending"}
+                                    highlight
+                                />
+                            </div>
+
+                            {verification?.selfieImage ? (
+                                <div
+                                    className="relative group w-32 h-32 cursor-pointer"
+                                    onClick={() =>
+                                        openImageModal(
+                                            `${IMAGE_URL}/uploads/selfie/${verification.selfieImage}`
+                                        )
+                                    }
+                                >
+                                    <img
+                                        src={`${IMAGE_URL}/uploads/selfie/${verification.selfieImage}`}
+                                        alt="Selfie"
+                                        className="w-32 h-32 object-cover rounded-lg border"
+                                    />
+                                </div>
+                            ) : (
+                                <p className="text-sm text-gray-500">
+                                    No selfie image available
+                                </p>
+                            )}
+
+                        </div>
+
+                        {/* ID Verification */}
+                        <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-5 space-y-4">
+                            <div className="flex justify-between items-center">
+                                <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">
+                                    ID Verification
+                                </h3>
+                                <div className="flex gap-2">
+                                    {safeVerification.overallStatus === "Approved" ? (
+                                        <button
+                                            onClick={handleReject}
+                                            disabled={loading}
+                                            className="px-3 py-1.5 text-xs font-medium text-white bg-rose-500 hover:bg-rose-600 rounded-lg transition-colors disabled:opacity-50"
+                                        >
+                                            Reject
+                                        </button>
+                                    ) : safeVerification.overallStatus === "Rejected" ? (
+                                        <button
+                                            onClick={handleApprove}
+                                            disabled={loading}
+                                            className="px-3 py-1.5 text-xs font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors disabled:opacity-50"
+                                        >
+                                            Approve
+                                        </button>
+                                    ) : (
+                                        <>
+                                            <button
+                                                onClick={handleApprove}
+                                                disabled={loading}
+                                                className="px-3 py-1.5 text-xs font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors disabled:opacity-50"
+                                            >
+                                                Approve
+                                            </button>
+                                            <button
+                                                onClick={handleReject}
+                                                disabled={loading}
+                                                className="px-3 py-1.5 text-xs font-medium text-white bg-rose-500 hover:bg-rose-600 rounded-lg transition-colors disabled:opacity-50"
+                                            >
+                                                Reject
+                                            </button>
+                                        </>
+                                    )}
+                                </div>
+
+                            </div>
+
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                                <DetailItem
+                                    label="Status"
+                                    value={verification?.verifyId?.status}
+                                    highlight
+                                />
+                            </div>
+
+                            {verification?.verifyId?.image ? (
+                                <div
+                                    className="relative group w-32 h-32 cursor-pointer"
+                                    onClick={() =>
+                                        openImageModal(
+                                            `${IMAGE_URL}/uploads/id/${verification.verifyId.image}`
+                                        )
+                                    }
+                                >
+                                    <img
+                                        src={`${IMAGE_URL}/uploads/id/${verification.verifyId.image}`}
+                                        alt="ID Document"
+                                        className="w-32 h-32 object-cover rounded-lg border"
+                                    />
+                                </div>
+                            ) : (
+                                <p className="text-sm text-gray-500">
+                                    No ID document available
+                                </p>
+                            )}
+
+                        </div>
+
+
+                    </div>
+                </div>
             </div>
 
             {/* Verification History Modal */}

@@ -568,7 +568,7 @@ const PersonDetailsComp = ({
                   ID Verification
                 </h3>
                 <div className="flex gap-2">
-                  {safeVerification.overallStatus === "Approved" && (
+                  {safeVerification.overallStatus === "Approved" ? (
                     <button
                       onClick={handleReject}
                       disabled={loading}
@@ -576,8 +576,7 @@ const PersonDetailsComp = ({
                     >
                       Reject
                     </button>
-                  )}
-                  {safeVerification.overallStatus === "Rejected" && (
+                  ) : safeVerification.overallStatus === "Rejected" ? (
                     <button
                       onClick={handleApprove}
                       disabled={loading}
@@ -585,8 +584,7 @@ const PersonDetailsComp = ({
                     >
                       Approve
                     </button>
-                  )}
-                  {safeVerification.overallStatus === "Pending" && (
+                  ) : (
                     <>
                       <button
                         onClick={handleApprove}
@@ -605,6 +603,7 @@ const PersonDetailsComp = ({
                     </>
                   )}
                 </div>
+
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
