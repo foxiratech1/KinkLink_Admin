@@ -439,6 +439,45 @@ const PersonDetailsComp = ({
             </h2>
 
             <div className="flex items-center gap-2">
+              <div className="flex gap-2">
+                  {safeVerification.overallStatus === "Approved" && (
+                    <button
+                      onClick={() => setRejectModalOpen(true)}
+                      disabled={loading}
+                      className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-rose-500 hover:bg-rose-600 rounded-lg transition-colors disabled:opacity-50"
+                    >
+                      Reject
+                    </button>
+                  )}
+                  {safeVerification.overallStatus === "Rejected" && (
+                    <button
+                      onClick={handleApprove}
+                      disabled={loading}
+                      className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors disabled:opacity-50"
+                    >
+                      Approve
+                    </button>
+                  )}
+                  {["Under Review", "Verification Requested"].includes(safeVerification.overallStatus) && (
+
+                    <>
+                      <button
+                        onClick={handleApprove}
+                        disabled={loading}
+                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors disabled:opacity-50"
+                      >
+                        Approve
+                      </button>
+                      <button
+                        onClick={() => setRejectModalOpen(true)}
+                        disabled={loading}
+                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-rose-500 hover:bg-rose-600 rounded-lg transition-colors disabled:opacity-50"
+                      >
+                        Reject
+                      </button>
+                    </>
+                  )}
+                </div>
               {verification?.metadata?.history &&
                 verification.metadata.history.length > 0 && (
                   <button
@@ -521,7 +560,7 @@ const PersonDetailsComp = ({
                 <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">
                   Live Selfie Verification
                 </h3>
-                <div className="flex gap-2">
+                {/* <div className="flex gap-2">
                   {safeVerification.overallStatus === "Approved" && (
                     <button
                       onClick={() => setRejectModalOpen(true)}
@@ -559,7 +598,7 @@ const PersonDetailsComp = ({
                       </button>
                     </>
                   )}
-                </div>
+                </div> */}
               </div>
 
 
@@ -600,7 +639,7 @@ const PersonDetailsComp = ({
                 <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">
                   ID Verification
                 </h3>
-                <div className="flex gap-2">
+                {/* <div className="flex gap-2">
                   {safeVerification.overallStatus === "Approved" ? (
                     <button
                       onClick={() => setRejectModalOpen(true)}
@@ -635,7 +674,7 @@ const PersonDetailsComp = ({
                       </button>
                     </>
                   )}
-                </div>
+                </div> */}
 
               </div>
 
@@ -652,12 +691,12 @@ const PersonDetailsComp = ({
                   className="relative group w-32 h-32 cursor-pointer"
                   onClick={() =>
                     openImageModal(
-                      `${IMAGE_URL}/uploads/id/${verification.verifyId.image}`
+                      `${IMAGE_URL}/uploads/document/${verification.verifyId.image}`
                     )
                   }
                 >
                   <img
-                    src={`${IMAGE_URL}/uploads/id/${verification.verifyId.image}`}
+                    src={`${IMAGE_URL}/uploads/document/${verification.verifyId.image}`}
                     alt="ID Document"
                     className="w-32 h-32 object-cover rounded-lg border"
                   />
