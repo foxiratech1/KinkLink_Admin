@@ -156,4 +156,16 @@ export const adminRequestUserIdApi = async (
     return res.data;
 };
 
+// UPDATE USER VERIFICATION NOTE
+export const updateUserVerificationNoteApi = async (
+    userId: string,
+    adminNote: string
+): Promise<UserActionResponse> => {
+    const res = await axiosInstance.patch<UserActionResponse>(
+        `/api/admin/user-verification-note/${userId}`,
+        { adminNote }
+    );
+    return res.data;
+};
+
 

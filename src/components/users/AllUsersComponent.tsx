@@ -144,6 +144,7 @@ const AllUsersComponent = () => {
                     Profile
                   </TableCell>
 
+
                   <TableCell
                     isHeader
                     className="px-6 py-3 text-xs font-medium uppercase"
@@ -190,6 +191,12 @@ const AllUsersComponent = () => {
                     isHeader
                     className="px-6 py-3 text-xs font-medium uppercase"
                   >
+                    Note
+                  </TableCell>
+                  <TableCell
+                    isHeader
+                    className="px-6 py-3 text-xs font-medium uppercase"
+                  >
                     Actions
                   </TableCell>
                 </TableRow>
@@ -218,6 +225,7 @@ const AllUsersComponent = () => {
                       />
                     </TableCell>
 
+
                     <TableCell className="px-6 py-4 text-sm">
                       {user.email}
                     </TableCell>
@@ -243,14 +251,14 @@ const AllUsersComponent = () => {
                     <TableCell className="px-6 py-4 text-sm">
                       <span
                         className={`rounded-full px-2 py-1 text-xs font-semibold ${user.verification?.overallStatus === "Approved"
-                            ? "bg-green-100 text-green-800"
-                            : user.verification?.overallStatus === "Manual_Review"
-                              ? "bg-blue-100 text-blue-800"
-                              : user.verification?.overallStatus === "Pending"
-                                ? "bg-yellow-100 text-yellow-800"
-                                : user.verification?.overallStatus === "Rejected"
-                                  ? "bg-red-100 text-red-800"
-                                  : "bg-gray-100 text-gray-800"
+                          ? "bg-green-100 text-green-800"
+                          : user.verification?.overallStatus === "Manual_Review"
+                            ? "bg-blue-100 text-blue-800"
+                            : user.verification?.overallStatus === "Pending"
+                              ? "bg-yellow-100 text-yellow-800"
+                              : user.verification?.overallStatus === "Rejected"
+                                ? "bg-red-100 text-red-800"
+                                : "bg-gray-100 text-gray-800"
                           }`}
                       >
                         {user.verification?.overallStatus || "-"}
@@ -266,6 +274,15 @@ const AllUsersComponent = () => {
                     <TableCell className="px-6 py-4 text-sm text-gray-500">
                       {new Date(user.createdAt).toLocaleDateString()}
                     </TableCell>
+                    <TableCell className="px-6 py-4 text-sm max-w-xs">
+                      <div
+                        className="truncate"
+                        title={user.adminNote || ""}
+                      >
+                        {user.adminNote || "-"}
+                      </div>
+                    </TableCell>
+
                     <TableCell className="px-6 py-4">
                       <Button
                         size="sm"

@@ -28,6 +28,7 @@ export type User = {
     personProfile?: {
         profileImg?: string;
     };
+    adminNote?: string;
 };
 
 // Response type for GET /api/admin/users
@@ -74,6 +75,7 @@ export type UserDetail = {
     createdAt: string;
     updatedAt: string;
     __v: number;
+    adminNote?: string;
 };
 
 // Person profile types
