@@ -44,6 +44,7 @@ const BusinessDetailsComp = ({ user, businessProfile, verification, onUpdate }: 
 
     const [noteModalOpen, setNoteModalOpen] = useState(false);
     const [noteText, setNoteText] = useState(user.adminNote || "");
+    const [rejectType, setRejectType] = useState<"selfie" | "id" | null>(null);
 
     const handleUpdateNote = async () => {
         setLoading(true);
@@ -70,40 +71,71 @@ const BusinessDetailsComp = ({ user, businessProfile, verification, onUpdate }: 
         setImageModal(null);
     };
 
-    const handleApprove = async () => {
-        if (!verification?._id) {
-            toast.error("Verification ID not found");
-            return;
-        }
-        setLoading(true);
-        try {
-            await updateUserRegiStatusApi(user._id, verification._id, "Approve");
-            toast.success("Business approved successfully");
-            onUpdate();
-        } catch (err: any) {
-            toast.error(err?.response?.data?.message || "Failed to approve business");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    // const handleReject = async () => {
+    // const handleApprove = async () => {
     //     if (!verification?._id) {
     //         toast.error("Verification ID not found");
     //         return;
     //     }
     //     setLoading(true);
     //     try {
-    //         await updateUserRegiStatusApi(user._id, verification._id, "Reject");
-    //         toast.success("Business rejected successfully");
+    //         await updateUserRegiStatusApi(user._id, verification._id, "Approve");
+    //         toast.success("Business approved successfully");
     //         onUpdate();
     //     } catch (err: any) {
-    //         toast.error(err?.response?.data?.message || "Failed to reject business");
+    //         toast.error(err?.response?.data?.message || "Failed to approve business");
     //     } finally {
     //         setLoading(false);
     //     }
     // };
-    const handleRejectConfirm = async () => {
+    const handleApprove = async (type: "selfie" | "id") => {
+        if (!verification?._id) {
+            toast.error("Verification ID not found");
+            return;
+        }
+        setLoading(true);
+        try {
+            await updateUserRegiStatusApi(user._id, verification._id, type, "Approve");
+            toast.success(`${type === "selfie" ? "Selfie" : "ID"} approved successfully`);
+            onUpdate();
+        } catch (err: any) {
+            toast.error(err?.response?.data?.message || "Failed");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
+    // const handleRejectConfirm = async () => {
+    //     if (!verification?._id) {
+    //         toast.error("Verification ID not found");
+    //         return;
+    //     }
+
+    //     if (!rejectionReason.trim()) {
+    //         toast.error("Please enter rejection reason");
+    //         return;
+    //     }
+
+    //     setLoading(true);
+    //     try {
+    //         await updateUserRegiStatusApi(
+    //             user._id,
+    //             verification._id,
+    //             "Reject",
+    //             rejectionReason
+    //         );
+
+    //         toast.success("User rejected successfully");
+    //         setRejectModalOpen(false);
+    //         setRejectionReason("");
+    //         onUpdate();
+    //     } catch (err: any) {
+    //         toast.error(err?.response?.data?.message || "Failed");
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+    const handleRejectConfirm = async (type: "selfie" | "id") => {
         if (!verification?._id) {
             toast.error("Verification ID not found");
             return;
@@ -119,11 +151,12 @@ const BusinessDetailsComp = ({ user, businessProfile, verification, onUpdate }: 
             await updateUserRegiStatusApi(
                 user._id,
                 verification._id,
+                type,
                 "Reject",
                 rejectionReason
             );
 
-            toast.success("User rejected successfully");
+            toast.success(`${type === "selfie" ? "Selfie" : "ID"} rejected successfully`);
             setRejectModalOpen(false);
             setRejectionReason("");
             onUpdate();
@@ -133,7 +166,6 @@ const BusinessDetailsComp = ({ user, businessProfile, verification, onUpdate }: 
             setLoading(false);
         }
     };
-
 
     const handleDeleteVerification = async () => {
         if (!verification?._id) {
@@ -207,15 +239,9 @@ const BusinessDetailsComp = ({ user, businessProfile, verification, onUpdate }: 
         });
     };
 
-    // const formatDateTime = (dateString?: string) => {
-    //     if (!dateString) return "-";
-    //     return new Date(dateString).toLocaleString('en-US', {
-    //         dateStyle: 'medium',
-    //         timeStyle: 'short'
-    //     });
-    // };
 
-    const safeVerification = verification || {};
+
+    // const safeVerification = verification || {};
     console.log("Verification prop:", verification);
 
     return (
@@ -389,7 +415,7 @@ const BusinessDetailsComp = ({ user, businessProfile, verification, onUpdate }: 
                                     Live Selfie Verification
                                 </h3>
                                 <div className="flex gap-2">
-                                    {safeVerification.overallStatus === "Approved" && (
+                                    {/* {safeVerification.overallStatus === "Approved" && (
                                         <button
                                             onClick={() => setRejectModalOpen(true)}
 
@@ -427,7 +453,25 @@ const BusinessDetailsComp = ({ user, businessProfile, verification, onUpdate }: 
                                                 Reject
                                             </button>
                                         </>
-                                    )}
+                                    )} */}
+                                    <button
+                                        onClick={() => handleApprove("selfie")}
+                                        disabled={loading}
+                                        className="px-3 py-1.5 text-xs font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors disabled:opacity-50"
+                                    >
+                                        Approve
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            setRejectType("selfie");
+                                            setRejectModalOpen(true);
+                                        }}
+
+                                        disabled={loading}
+                                        className="px-3 py-1.5 text-xs font-medium text-white bg-rose-500 hover:bg-rose-600 rounded-lg transition-colors disabled:opacity-50"
+                                    >
+                                        Reject
+                                    </button>
                                 </div>
                             </div>
 
@@ -435,7 +479,7 @@ const BusinessDetailsComp = ({ user, businessProfile, verification, onUpdate }: 
                             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                                 <DetailItem
                                     label="Status"
-                                    value={verification?.isSelfieCompleted ? "Completed" : "Pending"}
+                                    value={verification?.selfie?.status}
                                     highlight
                                 />
                             </div>
@@ -470,7 +514,7 @@ const BusinessDetailsComp = ({ user, businessProfile, verification, onUpdate }: 
                                     ID Verification
                                 </h3>
                                 <div className="flex gap-2">
-                                    {safeVerification.overallStatus === "Approved" ? (
+                                    {/* {safeVerification.overallStatus === "Approved" ? (
                                         <button
                                             onClick={() => setRejectModalOpen(true)}
 
@@ -505,7 +549,27 @@ const BusinessDetailsComp = ({ user, businessProfile, verification, onUpdate }: 
                                                 Reject
                                             </button>
                                         </>
-                                    )}
+                                    )} */}
+                                    <button
+                                        onClick={() => handleApprove("id")}
+
+                                        disabled={loading}
+                                        className="px-3 py-1.5 text-xs font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors disabled:opacity-50"
+                                    >
+                                        Approve
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            setRejectType("id");
+                                            setRejectModalOpen(true);
+                                        }}
+
+                                        disabled={loading}
+                                        className="px-3 py-1.5 text-xs font-medium text-white bg-rose-500 hover:bg-rose-600 rounded-lg transition-colors disabled:opacity-50"
+                                    >
+                                        Reject
+                                    </button>
+
                                 </div>
 
                             </div>
@@ -573,7 +637,11 @@ const BusinessDetailsComp = ({ user, businessProfile, verification, onUpdate }: 
                             </button>
 
                             <button
-                                onClick={handleRejectConfirm}
+                                onClick={() => {
+                                    if (rejectType) {
+                                        handleRejectConfirm(rejectType);
+                                    }
+                                }}
                                 disabled={loading}
                                 className="px-4 py-2 text-sm rounded-lg bg-rose-500 text-white hover:bg-rose-600 disabled:opacity-50"
                             >

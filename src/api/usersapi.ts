@@ -34,6 +34,7 @@ export const getUserDetailsApi = async (id: string): Promise<UserDetailsResponse
 export const updateUserRegiStatusApi = async (
     userId: string,
     verificationId: string,
+    type: "selfie" | "id",
     status: "Approve" | "Reject",
     rejectionReason?: string
 ): Promise<UserActionResponse> => {
@@ -46,7 +47,8 @@ export const updateUserRegiStatusApi = async (
         {
             status: formattedStatus,
             userId: userId,
-            rejectionReason
+            rejectionReason,
+            type
         }
     );
 

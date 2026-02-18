@@ -54,8 +54,11 @@ const PersonDetailsComp = ({
   const [rejectModalOpen, setRejectModalOpen] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
 
+
   const [noteModalOpen, setNoteModalOpen] = useState(false);
   const [noteText, setNoteText] = useState(user.adminNote || "");
+  const [rejectType, setRejectType] = useState<"selfie" | "id" | null>(null);
+
 
   const handleUpdateNote = async () => {
     setLoading(true);
@@ -80,15 +83,15 @@ const PersonDetailsComp = ({
     setImageModal(null);
   };
 
-  const handleApprove = async () => {
+  const handleApprove = async (type: "selfie" | "id") => {
     if (!verification?._id) {
       toast.error("Verification ID not found");
       return;
     }
     setLoading(true);
     try {
-      await updateUserRegiStatusApi(user._id, verification._id, "Approve");
-      toast.success("User approved successfully");
+      await updateUserRegiStatusApi(user._id, verification._id, type, "Approve");
+      toast.success(`${type === "selfie" ? "Selfie" : "ID"} approved successfully`);
       onUpdate();
     } catch (err: any) {
       toast.error(err?.response?.data?.message || "Failed");
@@ -97,23 +100,8 @@ const PersonDetailsComp = ({
     }
   };
 
-  // const handleReject = async () => {
-  //   if (!verification?._id) {
-  //     toast.error("Verification ID not found");
-  //     return;
-  //   }
-  //   setLoading(true);
-  //   try {
-  //     await updateUserRegiStatusApi(user._id, verification._id, "Reject");
-  //     toast.success("User rejected successfully");
-  //     onUpdate();
-  //   } catch (err: any) {
-  //     toast.error(err?.response?.data?.message || "Failed");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-  const handleRejectConfirm = async () => {
+
+  const handleRejectConfirm = async (type: "selfie" | "id") => {
     if (!verification?._id) {
       toast.error("Verification ID not found");
       return;
@@ -129,11 +117,12 @@ const PersonDetailsComp = ({
       await updateUserRegiStatusApi(
         user._id,
         verification._id,
+        type,
         "Reject",
         rejectionReason
       );
 
-      toast.success("User rejected successfully");
+      toast.success(`${type === "selfie" ? "Selfie" : "ID"} rejected successfully`);
       setRejectModalOpen(false);
       setRejectionReason("");
       onUpdate();
@@ -217,7 +206,7 @@ const PersonDetailsComp = ({
 
 
   const detailsArray = personProfile?.details || [];
-  const safeVerification = verification || {};
+  // const safeVerification = verification || {};
 
   return (
     <div className="w-full">
@@ -455,45 +444,7 @@ const PersonDetailsComp = ({
             </h2>
 
             <div className="flex items-center gap-2">
-              <div className="flex gap-2">
-                {safeVerification.overallStatus === "Approved" && (
-                  <button
-                    onClick={() => setRejectModalOpen(true)}
-                    disabled={loading}
-                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-rose-500 hover:bg-rose-600 rounded-lg transition-colors disabled:opacity-50"
-                  >
-                    Reject
-                  </button>
-                )}
-                {safeVerification.overallStatus === "Rejected" && (
-                  <button
-                    onClick={handleApprove}
-                    disabled={loading}
-                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors disabled:opacity-50"
-                  >
-                    Approve
-                  </button>
-                )}
-                {["Under Review", "Verification Requested"].includes(safeVerification.overallStatus) && (
 
-                  <>
-                    <button
-                      onClick={handleApprove}
-                      disabled={loading}
-                      className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors disabled:opacity-50"
-                    >
-                      Approve
-                    </button>
-                    <button
-                      onClick={() => setRejectModalOpen(true)}
-                      disabled={loading}
-                      className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-rose-500 hover:bg-rose-600 rounded-lg transition-colors disabled:opacity-50"
-                    >
-                      Reject
-                    </button>
-                  </>
-                )}
-              </div>
               {/* {verification?.metadata?.history &&
                 verification.metadata.history.length > 0 && (
                   <button
@@ -576,10 +527,14 @@ const PersonDetailsComp = ({
                 <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">
                   Live Selfie Verification
                 </h3>
-                {/* <div className="flex gap-2">
-                  {safeVerification.overallStatus === "Approved" && (
+                <div className="flex gap-2">
+                  {/* {safeVerification.overallStatus === "Approved" && (
                     <button
-                      onClick={() => setRejectModalOpen(true)}
+                      onClick={() => {
+                        setRejectType("selfie");
+                        setRejectModalOpen(true);
+                      }}
+
                       disabled={loading}
                       className="px-3 py-1.5 text-xs font-medium text-white bg-rose-500 hover:bg-rose-600 rounded-lg transition-colors disabled:opacity-50"
                     >
@@ -588,7 +543,7 @@ const PersonDetailsComp = ({
                   )}
                   {safeVerification.overallStatus === "Rejected" && (
                     <button
-                      onClick={handleApprove}
+                      onClick={() => handleApprove("selfie")}
                       disabled={loading}
                       className="px-3 py-1.5 text-xs font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors disabled:opacity-50"
                     >
@@ -599,29 +554,51 @@ const PersonDetailsComp = ({
 
                     <>
                       <button
-                        onClick={handleApprove}
+                        onClick={() => handleApprove("selfie")}
                         disabled={loading}
                         className="px-3 py-1.5 text-xs font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors disabled:opacity-50"
                       >
                         Approve
                       </button>
                       <button
-                        onClick={() => setRejectModalOpen(true)}
+                        onClick={() => {
+                          setRejectType("selfie");
+                          setRejectModalOpen(true);
+                        }}
+
                         disabled={loading}
                         className="px-3 py-1.5 text-xs font-medium text-white bg-rose-500 hover:bg-rose-600 rounded-lg transition-colors disabled:opacity-50"
                       >
                         Reject
                       </button>
                     </>
-                  )}
-                </div> */}
+                  )} */}
+                  <button
+                    onClick={() => handleApprove("selfie")}
+                    disabled={loading}
+                    className="px-3 py-1.5 text-xs font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors disabled:opacity-50"
+                  >
+                    Approve
+                  </button>
+                  <button
+                    onClick={() => {
+                      setRejectType("selfie");
+                      setRejectModalOpen(true);
+                    }}
+
+                    disabled={loading}
+                    className="px-3 py-1.5 text-xs font-medium text-white bg-rose-500 hover:bg-rose-600 rounded-lg transition-colors disabled:opacity-50"
+                  >
+                    Reject
+                  </button>
+                </div>
               </div>
 
 
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 <DetailItem
                   label="Status"
-                  value={verification?.isSelfieCompleted ? "Completed" : "Pending"}
+                  value={verification?.selfie?.status}
                   highlight
                 />
               </div>
@@ -655,8 +632,8 @@ const PersonDetailsComp = ({
                 <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">
                   ID Verification
                 </h3>
-                {/* <div className="flex gap-2">
-                  {safeVerification.overallStatus === "Approved" ? (
+                <div className="flex gap-2">
+                  {/* {safeVerification.overallStatus === "Approved" ? (
                     <button
                       onClick={() => setRejectModalOpen(true)}
                       disabled={loading}
@@ -666,7 +643,8 @@ const PersonDetailsComp = ({
                     </button>
                   ) : safeVerification.overallStatus === "Rejected" ? (
                     <button
-                      onClick={handleApprove}
+                      onClick={() => handleApprove("id")}
+
                       disabled={loading}
                       className="px-3 py-1.5 text-xs font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors disabled:opacity-50"
                     >
@@ -675,7 +653,8 @@ const PersonDetailsComp = ({
                   ) : (
                     <>
                       <button
-                        onClick={handleApprove}
+                        onClick={() => handleApprove("id")}
+
                         disabled={loading}
                         className="px-3 py-1.5 text-xs font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors disabled:opacity-50"
                       >
@@ -689,8 +668,27 @@ const PersonDetailsComp = ({
                         Reject
                       </button>
                     </>
-                  )}
-                </div> */}
+                  )} */}
+                  <button
+                    onClick={() => handleApprove("id")}
+
+                    disabled={loading}
+                    className="px-3 py-1.5 text-xs font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors disabled:opacity-50"
+                  >
+                    Approve
+                  </button>
+                  <button
+                    onClick={() => {
+                      setRejectType("selfie");
+                      setRejectModalOpen(true);
+                    }}
+
+                    disabled={loading}
+                    className="px-3 py-1.5 text-xs font-medium text-white bg-rose-500 hover:bg-rose-600 rounded-lg transition-colors disabled:opacity-50"
+                  >
+                    Reject
+                  </button>
+                </div>
 
               </div>
 
@@ -869,7 +867,12 @@ const PersonDetailsComp = ({
               </button>
 
               <button
-                onClick={handleRejectConfirm}
+                onClick={() => {
+                  if (rejectType) {
+                    handleRejectConfirm(rejectType);
+                  }
+                }}
+
                 disabled={loading}
                 className="px-4 py-2 text-sm rounded-lg bg-rose-500 text-white hover:bg-rose-600 disabled:opacity-50"
               >
