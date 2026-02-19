@@ -234,6 +234,6 @@ export type GetUserVerificationsResponse = {
 export type GetUserVerificationsParams = {
     page?: number;
     limit?: number;
-    status?: "Approved" | "Rejected" | "Pending" | "Verification Requested" | "Verification Suspended" | "Not Verified" | "Under Review";
+    status?: "Approved" | "Rejected" | "Pending" | "Verification Requested" | "Suspended" | "Not Verified" | "Under Review";
     search?: string;
 };

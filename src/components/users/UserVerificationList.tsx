@@ -12,6 +12,7 @@ import {
 } from "../ui/table";
 import Pagination from "../ui/pagination/Pagination";
 import Avatar from "../ui/avatar/Avatar";
+import { getVerificationStatusColor } from "../../utils/statusUtils";
 
 const IMAGE_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/uploads/profileImage/`;
 
@@ -24,7 +25,7 @@ const getVerificationImage = (user: VerificationUser): string | null => {
 
 
 interface UserVerificationListProps {
-    status?: "Approved" | "Rejected" | "Pending" | "Verification Requested" | "Verification Suspended" | "Not Verified" | "Under Review";
+    status?: "Approved" | "Rejected" | "Pending" | "Verification Requested" | "Suspended" | "Not Verified" | "Under Review";
 }
 
 const UserVerificationList = ({ status }: UserVerificationListProps) => {
@@ -192,14 +193,13 @@ const UserVerificationList = ({ status }: UserVerificationListProps) => {
                                     <TableCell className="px-6 py-4 text-sm text-gray-500">
                                         {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : "-"}
                                     </TableCell>
+
+
                                     <TableCell className="px-6 py-4 text-sm">
                                         <span
-                                            className={`rounded-full px-2 py-1 text-xs font-semibold ${item.overallStatus === "Approved"
-                                                ? "bg-green-100 text-green-800"
-                                                : item.overallStatus === "Under Review"
-                                                    ? "bg-yellow-100 text-yellow-800"
-                                                    : "bg-red-100 text-red-800"
-                                                }`}
+                                            className={`rounded-full px-2 py-1 text-xs font-semibold ${getVerificationStatusColor(
+                                                item.overallStatus
+                                            )}`}
                                         >
                                             {item.overallStatus === "Approved"
                                                 ? "Verified"

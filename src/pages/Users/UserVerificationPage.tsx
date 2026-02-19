@@ -2,13 +2,13 @@ import { useState } from "react";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import UserVerificationList from "../../components/users/UserVerificationList";
 
-type TabType = "All" | "Verified" | "Verification Requested" | "Under Review" | "Rejected" | "Verification Suspended";
+type TabType = "All" | "Verified" | "Verification Requested" | "Under Review" | "Rejected" | "Suspended";
 
 const UserVerificationPage = () => {
     const [activeTab, setActiveTab] = useState<TabType>("All");
 
     return (
-        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 rounded-lg">
+        <div className="mx-auto w-full px-4 py-8 sm:px-6 lg:px-8 rounded-lg">
             <PageBreadcrumb
                 pageTitle="User Verification"
                 description="Manage user verification requests"
@@ -64,8 +64,8 @@ const UserVerificationPage = () => {
                             Rejected
                         </button>
                         <button
-                            onClick={() => setActiveTab("Verification Suspended")}
-                            className={`px-4 py-2 font-medium transition-colors whitespace-nowrap ${activeTab === "Verification Suspended"
+                            onClick={() => setActiveTab("Suspended")}
+                            className={`px-4 py-2 font-medium transition-colors whitespace-nowrap ${activeTab === "Suspended"
                                 ? "border-b-2 border-brand-500 text-brand-600 dark:text-brand-400"
                                 : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
                                 }`}
@@ -82,7 +82,7 @@ const UserVerificationPage = () => {
                     {activeTab === "Verification Requested" && <UserVerificationList status="Verification Requested" />}
                     {activeTab === "Under Review" && <UserVerificationList status="Under Review" />}
                     {activeTab === "Rejected" && <UserVerificationList status="Rejected" />}
-                    {activeTab === "Verification Suspended" && <UserVerificationList status="Verification Suspended" />}
+                    {activeTab === "Suspended" && <UserVerificationList status="Suspended" />}
                 </div>
 
             </div>

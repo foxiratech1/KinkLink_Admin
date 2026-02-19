@@ -12,6 +12,7 @@ import {
 } from "../ui/table";
 import Button from "../ui/button/Button";
 import Pagination from "../ui/pagination/Pagination";
+import { getVerificationStatusColor } from "../../utils/statusUtils";
 
 
 type TabType = "All" | "Person" | "Business";
@@ -248,22 +249,16 @@ const AllUsersComponent = () => {
                     <TableCell className="px-6 py-4 text-sm text-gray-500">
                       {user.registrationRole || "-"}
                     </TableCell>
+
+
                     <TableCell className="px-6 py-4 text-sm">
                       <span
-                        className={`rounded-full px-2 py-1 text-xs font-semibold ${user.verification?.overallStatus === "Approved"
-                          ? "bg-green-100 text-green-800"
-                          : user.verification?.overallStatus === "Manual_Review"
-                            ? "bg-blue-100 text-blue-800"
-                            : user.verification?.overallStatus === "Pending"
-                              ? "bg-yellow-100 text-yellow-800"
-                              : user.verification?.overallStatus === "Rejected"
-                                ? "bg-red-100 text-red-800"
-                                : "bg-gray-100 text-gray-800"
-                          }`}
+                        className={`rounded-full px-2 py-1 text-xs font-semibold ${getVerificationStatusColor(
+                          user.verification?.overallStatus
+                        )}`}
                       >
                         {user.verification?.overallStatus || "-"}
                       </span>
-
                     </TableCell>
                     {/* <TableCell className="px-6 py-4">
                       <span
