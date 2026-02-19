@@ -141,17 +141,17 @@ const VerificationSection: React.FC<VerificationSectionProps> = ({
                         />
                     </div>
 
-                    {verification?.selfieImage ? (
+                    {verification?.selfie?.image ? (
                         <div
                             className="relative group w-32 h-32 cursor-pointer"
                             onClick={() =>
                                 onImageClick(
-                                    `${IMAGE_URL}/uploads/selfie/${verification.selfieImage}`
+                                    `${IMAGE_URL}/uploads/selfie/${verification?.selfie?.image}`
                                 )
                             }
                         >
                             <img
-                                src={`${IMAGE_URL}/uploads/selfie/${verification.selfieImage}`}
+                                src={`${IMAGE_URL}/uploads/selfie/${verification?.selfie?.image}`}
                                 alt="Selfie"
                                 className="w-32 h-32 object-cover rounded-lg border"
                             />
