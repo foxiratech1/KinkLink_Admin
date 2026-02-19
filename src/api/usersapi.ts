@@ -147,16 +147,15 @@ export const updateVerificationStatusApi = async (
 };
 
 // ADMIN REQUEST USER ID VERIFICATION
-export const adminRequestUserIdApi = async (
-    userId: string,
-    adminNote: string
-): Promise<UserActionResponse> => {
-    const res = await axiosInstance.post<UserActionResponse>(
-        `/api/admin/admin-request-user-id/${userId}`,
-        { userId, adminNote }
+
+export const adminRequestUserIdApi = (verificationId: string, userId: string) => {
+    return axiosInstance.post(
+        `/api/admin/admin-request-user-id/${verificationId}`,
+        { userId }
     );
-    return res.data;
 };
+
+
 
 // UPDATE USER VERIFICATION NOTE
 export const updateUserVerificationNoteApi = async (

@@ -5,7 +5,8 @@ import {
     updateUserBlockStatus,
     updateUserRegiStatusApi,
     deleteUserVerificationApi,
-    updateUserVerificationNoteApi
+    updateUserVerificationNoteApi,
+    adminRequestUserIdApi
 } from "../../api/usersapi";
 import { useNavigate } from "react-router";
 import DetailItem from "./shared/DetailItem";
@@ -26,6 +27,25 @@ const BusinessDetailsComp = ({ user, businessProfile, verification, onUpdate }: 
     const [loading, setLoading] = useState(false);
     const [loadingStates, setLoadingStates] = useState<{ [key: string]: boolean }>({});
     const [imageModal, setImageModal] = useState<string | null>(null);
+
+    const handleAdminRequestUserId = async () => {
+        if (!verification?._id) {
+            toast.error("Verification ID not found");
+            return;
+        }
+
+        setLoading(true);
+        try {
+            await adminRequestUserIdApi(verification._id, user._id);
+            toast.success("User ID request sent successfully");
+            onUpdate();
+        } catch (error: any) {
+            toast.error(error?.response?.data?.message || "Failed to request User ID");
+        } finally {
+            setLoading(false);
+        }
+    };
+
 
     const handleUpdateNote = async (noteText: string) => {
         setLoading(true);
@@ -223,6 +243,18 @@ const BusinessDetailsComp = ({ user, businessProfile, verification, onUpdate }: 
                     loading={loading}
                 />
             </div>
+            <div className="px-6 py-6 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
+                <div className="flex justify-end">
+                    <button
+                        onClick={handleAdminRequestUserId}
+                        disabled={loading}
+                        className="flex items-center gap-2 px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white font-medium rounded-lg transition-colors"
+                    >
+                        Request User ID
+                    </button>
+                </div>
+            </div>
+
             {imageModal && (
                 <ImageModal
                     imageUrl={imageModal}

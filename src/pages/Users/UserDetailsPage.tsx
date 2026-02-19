@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import toast from "react-hot-toast";
-import { getUserDetailsApi, adminRequestUserIdApi } from "../../api/usersapi";
+import { getUserDetailsApi } from "../../api/usersapi";
 import { UserDetailsResponse } from "../../types/user.types";
 import PersonDetailsComp from "../../components/users/PersonDetailsComp";
 import BusinessDetailsComp from "../../components/users/BusinessDetailsComp";
@@ -11,28 +11,6 @@ const UserDetailsPage = () => {
     const [userDetails, setUserDetails] = useState<UserDetailsResponse | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
-    const [adminNote, setAdminNote] = useState("");
-    const [isSubmitting, setIsSubmitting] = useState(false);
-
-    const handleRequestVerification = async () => {
-        if (!id) return;
-
-        setIsSubmitting(true);
-        try {
-            await adminRequestUserIdApi(id, adminNote);
-            toast.success("Verification request sent successfully");
-            setIsRequestModalOpen(false);
-            setAdminNote("");
-            fetchUserDetails(); // Refresh user details
-        } catch (err: any) {
-            const errorMessage = err?.response?.data?.message || "Failed to send verification request";
-            toast.error(errorMessage);
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-
     const fetchUserDetails = async () => {
         if (!id) {
             setError("User ID is missing");
@@ -97,53 +75,6 @@ const UserDetailsPage = () => {
 
     return (
         <div className="min-h-screen bg-white dark:bg-gray-950">
-            {/* Request Verification Button */}
-
-
-            {/* Request Verification Modal */}
-            {isRequestModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 bg-opacity-50">
-                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
-                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                            Request User Verification
-                        </h3>
-                        <p className="text-gray-600 dark:text-gray-400 mb-4">
-                            Send a verification request to this user. They will be notified to submit their ID documents.
-                        </p>
-                        <div className="mb-4">
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Admin Note (Optional)
-                            </label>
-                            <textarea
-                                value={adminNote}
-                                onChange={(e) => setAdminNote(e.target.value)}
-                                placeholder="Enter any notes for the user..."
-                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-brand-500 dark:bg-gray-700 dark:text-white resize-none"
-                                rows={3}
-                            />
-                        </div>
-                        <div className="flex gap-3 justify-end">
-                            <button
-                                onClick={() => {
-                                    setIsRequestModalOpen(false);
-                                    setAdminNote("");
-                                }}
-                                className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-                                disabled={isSubmitting}
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={handleRequestVerification}
-                                disabled={isSubmitting}
-                                className="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                {isSubmitting ? "Sending..." : "Send Request"}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
 
             {userDetails.user.role === "Person" && userDetails.personProfile ? (
                 <PersonDetailsComp
@@ -168,17 +99,6 @@ const UserDetailsPage = () => {
                     </div>
                 </div>
             )}
-            <div className="flex justify-end px-4 py-4">
-                <button
-                    onClick={() => setIsRequestModalOpen(true)}
-                    className="flex items-center gap-2 px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white font-medium rounded-lg transition-colors"
-                >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    Request Verification
-                </button>
-            </div>
         </div>
     );
 };
