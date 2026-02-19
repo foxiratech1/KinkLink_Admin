@@ -6,7 +6,8 @@ import {
   updateUserBlockStatus,
   deleteUserVerificationApi,
   updateUserVerificationNoteApi,
-  adminRequestUserIdApi
+  adminRequestUserIdApi,
+  varicationSuspend,
 } from "../../api/usersapi";
 import { useNavigate } from "react-router";
 import DetailItem from "./shared/DetailItem";
@@ -33,7 +34,9 @@ const PersonDetailsComp = ({
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [imageModal, setImageModal] = useState<string | null>(null);
-  const [loadingStates, setLoadingStates] = useState<{ [key: string]: boolean }>({});
+  const [loadingStates, setLoadingStates] = useState<{
+    [key: string]: boolean;
+  }>({});
 
   const handleAdminRequestUserId = async () => {
     if (!verification?._id) {
@@ -47,7 +50,9 @@ const PersonDetailsComp = ({
       toast.success("User ID request sent successfully");
       onUpdate();
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Failed to request User ID");
+      toast.error(
+        error?.response?.data?.message || "Failed to request User ID",
+      );
     } finally {
       setLoading(false);
     }
@@ -73,8 +78,15 @@ const PersonDetailsComp = ({
     }
     setLoadingStates((prev) => ({ ...prev, [`approve-${type}`]: true }));
     try {
-      await updateUserRegiStatusApi(user._id, verification._id, type, "Approve");
-      toast.success(`${type === "selfie" ? "Selfie" : "ID"} approved successfully`);
+      await updateUserRegiStatusApi(
+        user._id,
+        verification._id,
+        type,
+        "Approve",
+      );
+      toast.success(
+        `${type === "selfie" ? "Selfie" : "ID"} approved successfully`,
+      );
       onUpdate();
     } catch (err: any) {
       toast.error(err?.response?.data?.message || "Failed");
@@ -95,15 +107,34 @@ const PersonDetailsComp = ({
         verification._id,
         type,
         "Reject",
-        reason
+        reason,
       );
-      toast.success(`${type === "selfie" ? "Selfie" : "ID"} rejected successfully`);
+      toast.success(
+        `${type === "selfie" ? "Selfie" : "ID"} rejected successfully`,
+      );
       onUpdate();
     } catch (err: any) {
       toast.error(err?.response?.data?.message || "Failed");
       throw err;
     } finally {
       setLoadingStates((prev) => ({ ...prev, [`reject-${type}`]: false }));
+    }
+  };
+  const handleVerficationSuspend = async () => {
+    if (!verification?._id) {
+      toast.error("Verification ID not found");
+      return;
+    }
+    setLoadingStates((prev) => ({ ...prev, [`suspend`]: true }));
+    try {
+      await varicationSuspend(verification._id);
+      toast.success(`Verification suspended successfully !`);
+      onUpdate();
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || "Failed");
+      throw err;
+    } finally {
+      setLoadingStates((prev) => ({ ...prev, [`suspend`]: false }));
     }
   };
 
@@ -113,7 +144,7 @@ const PersonDetailsComp = ({
       return;
     }
     const confirmDelete = window.confirm(
-      "Are you sure you want to delete this verification?"
+      "Are you sure you want to delete this verification?",
     );
     if (!confirmDelete) return;
     setLoading(true);
@@ -141,8 +172,6 @@ const PersonDetailsComp = ({
       setLoading(false);
     }
   };
-
-
 
   const detailsArray = personProfile?.details || [];
 
@@ -174,10 +203,11 @@ const PersonDetailsComp = ({
             <button
               onClick={handleBlockToggle}
               disabled={loading}
-              className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${user.isBlocked
-                ? "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 hover:bg-emerald-100 dark:hover:bg-emerald-950/50"
-                : "text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 hover:bg-amber-100 dark:hover:bg-amber-950/50"
-                }`}
+              className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                user.isBlocked
+                  ? "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 hover:bg-emerald-100 dark:hover:bg-emerald-950/50"
+                  : "text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 hover:bg-amber-100 dark:hover:bg-amber-950/50"
+              }`}
             >
               {user.isBlocked ? "Unblock User" : "Block User"}
             </button>
@@ -194,7 +224,7 @@ const PersonDetailsComp = ({
             </h2>
             <span
               className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium ${getVerificationStatusColor(
-                verification?.overallStatus
+                verification?.overallStatus,
               )}`}
             >
               {verification?.overallStatus}
@@ -211,10 +241,10 @@ const PersonDetailsComp = ({
               value={
                 user.dob
                   ? new Date(user.dob).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })
                   : "-"
               }
             />
@@ -248,7 +278,7 @@ const PersonDetailsComp = ({
                     className="relative group cursor-pointer w-32 h-32"
                     onClick={() =>
                       setImageModal(
-                        `${IMAGE_URL}/uploads/profileImage/${personProfile.profileImg}`
+                        `${IMAGE_URL}/uploads/profileImage/${personProfile.profileImg}`,
                       )
                     }
                   >
@@ -341,8 +371,9 @@ const PersonDetailsComp = ({
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <DetailItem
                 label="Age Range"
-                value={`${personProfile?.lookingFor?.ageRange?.min || "-"
-                  } - ${personProfile?.lookingFor?.ageRange?.max || "-"}`}
+                value={`${
+                  personProfile?.lookingFor?.ageRange?.min || "-"
+                } - ${personProfile?.lookingFor?.ageRange?.max || "-"}`}
                 highlight
               />
             </div>
@@ -360,7 +391,7 @@ const PersonDetailsComp = ({
                       >
                         {t}
                       </span>
-                    )
+                    ),
                   )
                 ) : (
                   <span className="text-sm text-gray-500 dark:text-gray-400">
@@ -377,6 +408,7 @@ const PersonDetailsComp = ({
           onApprove={handleApprove}
           onReject={handleReject}
           onDelete={handleDeleteVerification}
+          onSuspend={handleVerficationSuspend}
           loadingStates={loadingStates}
           loadingGlobal={loading}
           onImageClick={setImageModal}

@@ -14,11 +14,12 @@ export const API_ROUTES = {
     GET_ALL: "api/admin/users",
     GET_PENDING: "api/admin/users-pending",
     GET_USER_DETAILS: (id: string) => `api/admin/get-user-details/${id}`,
-    APPROVEREJECT: (id: string) => `api/admin/update-user-verification-status/${id}`,
+    APPROVEREJECT: (id: string) =>
+      `api/admin/update-user-verification-status/${id}`,
+    SUSPENDED: (id: string) => `api/admin/user-verification-suspend/${id}`,
     BLOCK_UNBLOCK: (id: string) => `api/admin/block-unblock-user/${id}`,
     GET_REJECT: "api/admin/users-reject",
     BLOCKED_USERS: "api/admin/users-blocked",
-
   },
   INTERESTS: {
     ADD: "api/admin/interest",
@@ -33,4 +34,3 @@ export const API_ROUTES = {
     DELETE_EVENT_TYPE: (id: string) => `api/admin/delete-event-type/${id}`,
   },
 };
-
