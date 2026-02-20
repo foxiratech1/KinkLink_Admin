@@ -409,7 +409,7 @@ const PersonDetailsComp = ({
           onReject={handleReject}
           onDelete={handleDeleteVerification}
           onSuspend={handleVerficationSuspend}
-          onRequestId={handleAdminRequestUserId} 
+          onRequestId={handleAdminRequestUserId}
           loadingStates={loadingStates}
           loadingGlobal={loading}
           onImageClick={setImageModal}
@@ -422,7 +422,7 @@ const PersonDetailsComp = ({
         />
       </div>
       <div className="px-6 py-6 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
-        <div className="flex justify-end">
+        {/* <div className="flex justify-end">
           <button
             onClick={handleAdminRequestUserId}
             disabled={loading}
@@ -430,7 +430,7 @@ const PersonDetailsComp = ({
           >
             Request User ID
           </button>
-        </div>
+        </div> */}
       </div>
 
       {imageModal && (
