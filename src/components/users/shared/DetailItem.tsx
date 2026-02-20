@@ -28,13 +28,14 @@
 // );
 
 // export default DetailItem;
+
 import React, { useState } from "react";
 
-interface DetailItemProps {
+type DetailItemProps = {
   label: string;
-  value?: string | number;
+  value?: string | number | null | boolean;
   highlight?: boolean;
-}
+};
 
 const DetailItem: React.FC<DetailItemProps> = ({
   label,
