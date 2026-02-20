@@ -7,7 +7,6 @@ import { useNavigate } from "react-router";
 import { useProfile } from "../../context/ProfileContext";
 import { adminProfileImage } from "../../utils/image";
 
-
 export default function UserDropdown() {
   const { profile } = useProfile();
   const [isOpen, setIsOpen] = useState(false);
@@ -22,11 +21,11 @@ export default function UserDropdown() {
   }
   const handleLogout = async () => {
     //  Handle side effects in component (localStorage cleanup)
-    localStorage.removeItem("token");
-    sessionStorage.removeItem("temp_remember_me");
 
     // Call API and update Redux state
     await dispatch(logoutUser());
+    localStorage.removeItem("token");
+    sessionStorage.removeItem("temp_remember_me");
     navigate("/signin");
   };
 
@@ -47,11 +46,14 @@ export default function UserDropdown() {
           />
         </span>
 
-        <span className="block mr-1 font-medium text-theme-sm">{profile?.firstName ? profile?.firstName : "Super"} {profile?.lastName ? profile?.lastName : "Admin"}
+        <span className="block mr-1 font-medium text-theme-sm">
+          {profile?.firstName ? profile?.firstName : "Super"}{" "}
+          {profile?.lastName ? profile?.lastName : "Admin"}
         </span>
         <svg
-          className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""
-            }`}
+          className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${
+            isOpen ? "rotate-180" : ""
+          }`}
           width="18"
           height="20"
           viewBox="0 0 18 20"
@@ -178,7 +180,6 @@ export default function UserDropdown() {
           </svg>
           Sign out
         </button>
-
       </Dropdown>
     </div>
   );
