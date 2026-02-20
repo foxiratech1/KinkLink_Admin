@@ -36,6 +36,8 @@ const BusinessDetailsComp = ({
   }>({});
   const [imageModal, setImageModal] = useState<string | null>(null);
 
+  const IMAGE_URL = import.meta.env.VITE_API_BASE_URL;
+
   const handleAdminRequestUserId = async () => {
     if (!verification?._id) {
       toast.error("Verification ID not found");
@@ -290,6 +292,69 @@ const BusinessDetailsComp = ({
           </h2>
 
           <div className="space-y-6">
+            <div className="flex flex-col lg:flex-row gap-8">
+              {/* Left: Profile Image */}
+              {businessProfile?.profileImg && (
+                <div className="flex-shrink-0 flex flex-col items-center gap-3">
+                  <div
+                    className="relative group cursor-pointer"
+                    onClick={() =>
+                      setImageModal(
+                        `${IMAGE_URL}/uploads/profileImage/${businessProfile.profileImg}`,
+                      )
+                    }
+                  >
+                    <div className="absolute -inset-1  to-blue-500 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-300"></div>
+                    <img
+                      src={`${IMAGE_URL}/uploads/profileImage/${businessProfile.profileImg}`}
+                      alt="Profile"
+                      className="relative w-32 h-32 md:w-40 md:h-40 object-cover rounded-xl border-2 border-white dark:border-gray-800 shadow-md transition-transform duration-300 group-hover:scale-[1.02]"
+                    />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center backdrop-blur-[2px]">
+                      <span className="text-white text-xs font-semibold bg-white/20 px-3 py-1 rounded-full border border-white/30">
+                        Zoom View
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Right: Primary Info */}
+              <div className="flex-1 space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <DetailItem
+                    label="Business Name"
+                    value={businessProfile.businessName}
+                  />
+                  <div className="flex flex-col gap-1">
+                    <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      Hosting Status
+                    </span>
+                    <div>
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          businessProfile?.userSentiment === "Active"
+                            ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                            : "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                        }`}
+                      >
+                        {businessProfile?.userSentiment || "N/A"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* About Me - Full Width for better readability */}
+                <div className="bg-gray-50 dark:bg-gray-800/40 p-4 rounded-lg border border-gray-100 dark:border-gray-700/50">
+                  <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider block mb-2">
+                    About Me
+                  </span>
+                  <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+                    {businessProfile?.aboutMe || "No description provided."}
+                  </p>
+                </div>
+              </div>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               <DetailItem
                 label="Business Name"
