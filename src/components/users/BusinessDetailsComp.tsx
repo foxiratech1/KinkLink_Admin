@@ -299,7 +299,7 @@ const BusinessDetailsComp = ({
               <div className="flex-1 space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {businessProfile?.profileImg && (
-                    <div className="flex-shrink-0 flex flex-col items-center align-start gap-3">
+                    <div className="flex-shrink-0 flex flex-col align-start gap-3">
                       <div
                         className="relative group cursor-pointer"
                         onClick={() =>
@@ -328,7 +328,7 @@ const BusinessDetailsComp = ({
                     </span>
                     <div>
                       <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        className={`inline-flex ipx-2.5 py-0.5 rounded-full text-xs font-medium ${
                           businessProfile?.userSentiment === "Active"
                             ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
                             : "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
