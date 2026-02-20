@@ -29,7 +29,7 @@
 
 // export default DetailItem;
 
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 
 type DetailItemProps = {
   label: string;
@@ -101,3 +101,5 @@ const DetailItem: React.FC<DetailItemProps> = ({
     </div>
   );
 };
+
+export default DetailItem;
