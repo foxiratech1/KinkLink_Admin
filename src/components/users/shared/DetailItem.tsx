@@ -29,7 +29,7 @@
 
 // export default DetailItem;
 
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 type DetailItemProps = {
   label: string;
