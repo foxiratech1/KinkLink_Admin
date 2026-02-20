@@ -409,6 +409,7 @@ const PersonDetailsComp = ({
           onReject={handleReject}
           onDelete={handleDeleteVerification}
           onSuspend={handleVerficationSuspend}
+          onRequestId={handleAdminRequestUserId} // <--- Ye pass kiya
           loadingStates={loadingStates}
           loadingGlobal={loading}
           onImageClick={setImageModal}

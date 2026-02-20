@@ -47,23 +47,18 @@ const DetailItem: React.FC<DetailItemProps> = ({
   const textRef = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
-    // Ye function check karta hai ki text overflow ho raha hai ya nahi
     const checkOverflow = () => {
       if (textRef.current) {
         const element = textRef.current;
-        // Agar scrollHeight (poori height) clientHeight (dikhaayi dene wali height) se badi hai
-        // iska matlab text clamp ho raha hai (3 line se zyada hai)
         if (element.scrollHeight > element.clientHeight) {
           setShowSeeMore(true);
         } else {
-          // Agar expanded nahi hai tabhi button chupao
           if (!isExpanded) setShowSeeMore(false);
         }
       }
     };
 
     checkOverflow();
-    // Screen resize hone par bhi check karega
     window.addEventListener("resize", checkOverflow);
     return () => window.removeEventListener("resize", checkOverflow);
   }, [value, isExpanded]);
