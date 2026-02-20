@@ -394,6 +394,7 @@ const BusinessDetailsComp = ({
           onReject={handleReject}
           onSuspend={handleVerficationSuspend}
           onDelete={handleDeleteVerification}
+                   onRequestId={handleAdminRequestUserId} 
           loadingStates={loadingStates}
           loadingGlobal={loading}
           onImageClick={setImageModal}
