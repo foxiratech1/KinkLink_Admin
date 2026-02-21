@@ -48,8 +48,9 @@ export default function App() {
               <Route path="/system-issues" element={<SystemIssueManage />} />
 
               {/* User Management */}
-              <Route path="/users/all" element={<AllUsersPage />} />
-              <Route path="/users/verification" element={<UserVerificationPage />} />
+              {/* <Route path="/users/all" element={<AllUsersPage />} /> */}
+                 <Route path="/moderation" element={<AllUsersPage />} />
+              <Route path="/verification" element={<UserVerificationPage />} />
               <Route path="/users/details/:id" element={<UserDetailsPage />} />
 
               {/* Interest Management */}

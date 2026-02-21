@@ -42,76 +42,100 @@ const navItems: NavItem[] = [
     icon: <PlugInIcon />, // Using UserCircleIcon as placeholder or reusable icon
     name: "System Issues",
     path: "/system-issues",
+  }, {
+    icon: <UserCircleIcon />, // Using UserCircleIcon as placeholder or reusable icon
+    name: "Verification",
+    path: "/verification",
   },
   {
     icon: <AlertHexaIcon />,
     name: "Moderation",
-    subItems: [
-      {
-        name: "Users Management",
-        icon: <UserCircleIcon />,
-        subItems: [
-          { name: "All Users", path: "/users/all" },
-          // { name: "Pending Users", path: "/users/pending" },
-          // { name: "Blocked Users", path: "/users/blocked" },
-          // { name: "Rejected Users", path: "/users/reject" },
-          { name: "User Verification", path: "/users/verification" },
-        ],
-      },
-      {
-        name: "Content Management",
-        icon: <DocsIcon />,
-        subItems: [
-          { name: "Interest Management", path: "/interests" },
-          { name: "Photos & Bios", path: "/content/photos-bios" },
-          { name: "Posts & Forums", path: "/content/posts-forums" },
-          { name: "Flagged Content", path: "/content/flagged" },
-          { name: "Deletion Log", path: "/content/deletion-log" },
-        ],
-      },
-    ],
+    path:"moderation"
+    // subItems: [
+    //   {
+    //     name: "Users Management",
+    //     icon: <UserCircleIcon />,
+    //     subItems: [
+    //       { name: "All Users", path: "/users/all" },
+    //       // { name: "Pending Users", path: "/users/pending" },
+    //       // { name: "Blocked Users", path: "/users/blocked" },
+    //       // { name: "Rejected Users", path: "/users/reject" },
+    //       { name: "User Verification", path: "/users/verification" },
+    //     ],
+    //   },
+    //   {
+    //     name: "Content Management",
+    //     icon: <DocsIcon />,
+    //     subItems: [
+    //       { name: "Interest Management", path: "/interests" },
+    //       { name: "Photos & Bios", path: "/content/photos-bios" },
+    //       { name: "Posts & Forums", path: "/content/posts-forums" },
+    //       { name: "Flagged Content", path: "/content/flagged" },
+    //       { name: "Deletion Log", path: "/content/deletion-log" },
+    //     ],
+    //   },
+    // ],
   },
   {
-    icon: <ChatIcon />,
+    icon: <DocsIcon />,
     name: "Events",
-    subItems: [
-      // Used ChatIcon as placeholder for Events/Calendar if CalenderIcon is commented out or re-imported
-      { name: "All Events", path: "/coming-soon", pro: false },
-      { name: "Reports", path: "/coming-soon", pro: false },
-      { name: "Cancellations", path: "/coming-soon", pro: false },
-      { name: "Compliance", path: "/coming-soon", pro: false },
-      { name: "Add & View Events", path: "/events", pro: false },
-    ],
+     path: "/coming-soon", pro: false
+    // subItems: [
+    //   // Used ChatIcon as placeholder for Events/Calendar if CalenderIcon is commented out or re-imported
+    //   { name: "All Events", path: "/coming-soon", pro: false },
+    //   { name: "Reports", path: "/coming-soon", pro: false },
+    //   { name: "Cancellations", path: "/coming-soon", pro: false },
+    //   { name: "Compliance", path: "/coming-soon", pro: false },
+    //   { name: "Add & View Events", path: "/events", pro: false },
+    // ],
   },
   {
     icon: <ChatIcon />,
-    name: "Messages",
-    subItems: [
-      { name: "Flagged Messages", path: "/coming-soon", pro: false },
-      { name: "Alerts", path: "/coming-soon", pro: false },
-      { name: "Admin Messages", path: "/coming-soon", pro: false },
-      { name: "Broadcasts", path: "/coming-soon", pro: false },
-    ],
+    name: "Messaging Control",
+    path: "/coming-soon", pro: false 
+    // subItems: [
+    //   { name: "Flagged Messages", path: "/coming-soon", pro: false },
+    //   { name: "Alerts", path: "/coming-soon", pro: false },
+    //   { name: "Admin Messages", path: "/coming-soon", pro: false },
+    //   { name: "Broadcasts", path: "/coming-soon", pro: false },
+    // ],
   },
   {
     icon: <DollarLineIcon />,
     name: "Payments",
-    subItems: [
-      { name: "Subscriptions", path: "/payments/subscriptions", pro: false },
-      { name: "Premium Users", path: "/payments/premium", pro: false },
-      { name: "Transactions", path: "/payments/transactions", pro: false },
-      { name: "Refunds", path: "/payments/refunds", pro: false },
-    ],
+    path: "/payments/subscriptions", pro: false
+    // subItems: [
+    //   { name: "Subscriptions", path: "/payments/subscriptions", pro: false },
+    //   { name: "Premium Users", path: "/payments/premium", pro: false },
+    //   { name: "Transactions", path: "/payments/transactions", pro: false },
+    //   { name: "Refunds", path: "/payments/refunds", pro: false },
+    // ],
+  },
+  // {
+  //   icon: <PieChartIcon />,
+  //   name: "Reports",
+  //   subItems: [
+  //     { name: "Inbox", path: "/reports/inbox", pro: false },
+  //     { name: "Actions", path: "/reports/actions", pro: false },
+  //     { name: "Resolution", path: "/reports/resolution", pro: false },
+  //     { name: "Escalations", path: "/reports/escalations", pro: false },
+  //   ],
+
+    
+  // },
+   {
+    icon: <PieChartIcon />,
+    name: "Analytics",
+    path: "/settings",
+  },  {
+    icon: <BoltIcon />,
+    name: "Settings",
+    path: "/settings",
   },
   {
-    icon: <PieChartIcon />,
-    name: "Reports",
-    subItems: [
-      { name: "Inbox", path: "/reports/inbox", pro: false },
-      { name: "Actions", path: "/reports/actions", pro: false },
-      { name: "Resolution", path: "/reports/resolution", pro: false },
-      { name: "Escalations", path: "/reports/escalations", pro: false },
-    ],
+    icon: <LockIcon />,
+    name: "Audit Log",
+    path: "/audit-log",
   },
 ];
 
@@ -322,7 +346,7 @@ const AppSidebar: React.FC = () => {
               </h2>
               {renderNavItems(navItems)}
             </div>
-            <div className="">
+            {/* <div className="">
               <h2
                 className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${!isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
                   }`}
@@ -334,7 +358,7 @@ const AppSidebar: React.FC = () => {
                 )}
               </h2>
               {renderNavItems(othersItems)}
-            </div>
+            </div> */}
           </div>
         </nav>
       </div>
