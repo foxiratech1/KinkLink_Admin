@@ -317,7 +317,6 @@ import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
 import { getAllUsersApi } from "../../api/usersapi";
-import { User } from "../../types/user.types";
 import {
   Table,
   TableBody,

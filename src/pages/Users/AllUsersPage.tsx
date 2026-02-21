@@ -1,5 +1,4 @@
 import AllUsersComponent from "../../components/users/AllUsersComponent";
-import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 
 const AllUsersPage = () => {
     return (
