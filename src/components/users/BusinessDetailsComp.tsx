@@ -71,7 +71,9 @@ const BusinessDetailsComp = ({
     }
   };
 
-  const handleApprove = async (type: "selfie" | "id") => {
+  const handleApprove = async (
+    type: "selfie" | "id" | "partnerSelfie" | "partnerId",
+  ) => {
     if (!verification?._id) {
       toast.error("Verification ID not found");
       return;
@@ -95,7 +97,10 @@ const BusinessDetailsComp = ({
     }
   };
 
-  const handleReject = async (type: "selfie" | "id", reason: string) => {
+  const handleReject = async (
+    type: "selfie" | "id" | "partnerSelfie" | "partnerId",
+    reason: string,
+  ) => {
     if (!verification?._id) {
       toast.error("Verification ID not found");
       return;
@@ -107,7 +112,7 @@ const BusinessDetailsComp = ({
         user._id,
         verification._id,
         type,
-        "Reject",
+        "Rejected",
         reason,
       );
 
@@ -389,6 +394,7 @@ const BusinessDetailsComp = ({
         </div>
 
         <VerificationSection
+          user={user}
           verification={verification}
           onApprove={handleApprove}
           onReject={handleReject}

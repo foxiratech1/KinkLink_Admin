@@ -296,9 +296,13 @@ import DetailItem from "./DetailItem";
 const IMAGE_URL = import.meta.env.VITE_API_BASE_URL;
 
 type VerificationSectionProps = {
+  user: any;
   verification: any;
-  onApprove: (type: "selfie" | "id") => void;
-  onReject: (type: "selfie" | "id", reason: string) => Promise<void>;
+  onApprove: (type: "selfie" | "id" | "partnerSelfie" | "partnerId") => void;
+  onReject: (
+    type: "selfie" | "id" | "partnerSelfie" | "partnerId",
+    reason: string,
+  ) => Promise<void>;
   onRequestId: () => void; // Parent se function liya
   onDelete: () => void;
   onSuspend: () => void;
@@ -1023,7 +1027,7 @@ const VerificationSection: React.FC<VerificationSectionProps> = ({
               disabled={!isSelfieApproved || loadingGlobal}
               className="px-6 py-2 bg-blue-600 text-white text-xs font-bold rounded-full hover:bg-blue-700 shadow-lg disabled:opacity-50"
             >
-              {loadingGlobal ? "SENDING..." : "REQUEST DOCUMENTS"}
+              {loadingGlobal ? "SENDING..." : "REQUEST IDS"}
             </button>
           )}
         </div>

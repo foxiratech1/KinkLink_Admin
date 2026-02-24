@@ -37,7 +37,7 @@ export const getUserDetailsApi = async (
 export const updateUserRegiStatusApi = async (
   userId: string,
   verificationId: string,
-  type: "selfie" | "id",
+  type: "selfie" | "id" | "partnerSelfie" | "partnerId",
   status: "Approve" | "Reject",
   rejectionReason?: string,
 ): Promise<UserActionResponse> => {

@@ -1,6 +1,10 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { UserDetail, PersonDetails } from "../../types/user.types";
+import {
+  UserDetail,
+  PersonDetails,
+  VerificationUser,
+} from "../../types/user.types";
 import {
   updateUserRegiStatusApi,
   updateUserBlockStatus,
@@ -19,7 +23,7 @@ import { getVerificationStatusColor } from "../../utils/statusUtils";
 type Props = {
   user: UserDetail;
   personProfile: PersonDetails;
-  verification?: any;
+  verification?: VerificationUser;
   onUpdate: () => void;
 };
 
@@ -71,7 +75,9 @@ const PersonDetailsComp = ({
     }
   };
 
-  const handleApprove = async (type: "selfie" | "id") => {
+  const handleApprove = async (
+    type: "selfie" | "id" | "partnerSelfie" | "partnerId",
+  ) => {
     if (!verification?._id) {
       toast.error("Verification ID not found");
       return;
@@ -331,7 +337,7 @@ const PersonDetailsComp = ({
             </div>
 
             {/* Personal Details Sections */}
-            {detailsArray.map((detail: any, index: number) => (
+            {detailsArray.map((detail, index: number) => (
               <div
                 key={detail._id}
                 className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-5"
@@ -363,12 +369,12 @@ const PersonDetailsComp = ({
           </h2>
           <div className="flex flex-wrap gap-2">
             {personProfile?.interests?.length ? (
-              personProfile.interests.map((interest: any) => (
+              personProfile.interests.map((interest: string) => (
                 <span
-                  key={interest._id}
+                  key={interest}
                   className="px-3 py-1.5 bg-brand-50 dark:bg-brand-950/30 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800 rounded-full text-sm font-medium"
                 >
-                  {interest.interestName}
+                  {interest}
                 </span>
               ))
             ) : (
