@@ -412,7 +412,7 @@ const BusinessDetailsComp = ({
           loading={loading}
         />
       </div>
-      <div className="px-6 py-6 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
+      {/* <div className="px-6 py-6 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
         <div className="flex justify-end">
           <button
             onClick={handleAdminRequestUserId}
@@ -422,7 +422,7 @@ const BusinessDetailsComp = ({
             Request User ID
           </button>
         </div>
-      </div>
+      </div> */}
 
       {imageModal && (
         <ImageModal imageUrl={imageModal} onClose={() => setImageModal(null)} />

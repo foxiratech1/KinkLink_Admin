@@ -38,7 +38,7 @@ export const updateUserRegiStatusApi = async (
   userId: string,
   verificationId: string,
   type: "selfie" | "id" | "partnerSelfie" | "partnerId",
-  status: "Approve" | "Reject",
+  status: "Approve" | "Rejected",
   rejectionReason?: string,
 ): Promise<UserActionResponse> => {
   const formattedStatus = status === "Approve" ? "Approved" : "Rejected";

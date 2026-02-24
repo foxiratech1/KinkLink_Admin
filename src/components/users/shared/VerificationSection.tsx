@@ -897,7 +897,24 @@ const VerificationSection: React.FC<VerificationSectionProps> = ({
     //   )}
     // </div>
     <div className="bg-white dark:bg-gray-900 px-6 py-6">
-      {/* --- SELFIE SECTION --- */}
+      <div className="flex items-center justify-between mb-5">
+        <h2 className="text-base font-bold text-gray-900 dark:text-white uppercase tracking-wider">
+          Verification Details
+        </h2>
+
+        <div className="flex items-center gap-2">
+          {verification?._id && (
+            <button
+              onClick={onDelete}
+              disabled={loadingGlobal}
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/30 hover:bg-rose-100 dark:hover:bg-rose-950/50 rounded-lg transition-colors disabled:opacity-50"
+            >
+              Delete Verification
+            </button>
+          )}
+        </div>
+      </div>
+
       <div className="space-y-6 mb-12">
         <div className="flex items-center gap-2 border-l-4 border-blue-600 pl-3">
           <h3 className="text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-widest">
@@ -1159,7 +1176,34 @@ const VerificationSection: React.FC<VerificationSectionProps> = ({
           )}
         </div>
       </div>
-
+      <div className="mt-8 flex justify-between items-center p-5 bg-rose-50 dark:bg-rose-950/20 rounded-lg border border-rose-100 dark:border-rose-900/30">
+        <div>
+          <h3 className="text-sm font-bold text-rose-900 dark:text-rose-400 uppercase tracking-wider">
+            Suspend Verification
+          </h3>
+          <p className="text-xs text-rose-600/70 dark:text-rose-400/60 mt-1">
+            Mark this verification as suspended.
+          </p>
+        </div>
+        <div className="flex gap-2">
+          {verification && (
+            <button
+              onClick={onSuspend}
+              disabled={
+                loadingStates["suspend"] ||
+                verification?.overallStatus === "Suspended"
+              }
+              className="px-4 py-2 text-sm font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded-lg transition-colors disabled:opacity-50 shadow-sm"
+            >
+              {loadingStates["suspend"]
+                ? "Suspending..."
+                : verification?.overallStatus === "Suspended"
+                  ? "Suspended"
+                  : "Suspend Account"}
+            </button>
+          )}
+        </div>
+      </div>
       {/* Reject Modal */}
       {rejectModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
