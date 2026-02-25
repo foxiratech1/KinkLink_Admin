@@ -1155,11 +1155,11 @@ const VerificationSection: React.FC<VerificationSectionProps> = ({
               </div>
               {verification.partnerVerifyId?.image ? (
                 <img
-                  src={`${IMAGE_URL}/uploads/partnerId/${verification.partnerVerifyId.image}`}
+                  src={`${IMAGE_URL}/uploads/partnerDocument/${verification.partnerVerifyId.image}`}
                   className="w-full h-48 object-contain bg-black rounded-xl mt-3 cursor-pointer"
                   onClick={() =>
                     onImageClick(
-                      `${IMAGE_URL}/uploads/partnerId/${verification.partnerVerifyId.image}`,
+                      `${IMAGE_URL}/uploads/partnerDocument/${verification.partnerVerifyId.image}`,
                     )
                   }
                 />
@@ -1168,9 +1168,7 @@ const VerificationSection: React.FC<VerificationSectionProps> = ({
                   ✓ Partner ID Verified & Archived
                 </div>
               ) : (
-                <div className="h-40 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-xl mt-3 text-gray-400 text-xs italic">
-                  Waiting for ID Request...
-                </div>
+                <></>
               )}
             </div>
           )}
