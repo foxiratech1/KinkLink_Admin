@@ -488,9 +488,7 @@ const AllUsersComponent = () => {
                         <TableRow
                           key={user._id}
                           onClick={() => navigate(`/users/details/${user._id}`)}
-                          className={`cursor-pointer border-b border-gray-50 last:border-0 ${
-                            index === 2 ? "bg-[#F5F3FF]" : "hover:bg-gray-50"
-                          }`}
+                          className={`cursor-pointer border-b border-gray-50 last:border-0`}
                         >
                           <TableCell className="px-6 py-4 text-center">
                             <input

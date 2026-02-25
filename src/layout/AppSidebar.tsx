@@ -51,7 +51,8 @@ const navItems: NavItem[] = [
   {
     icon: <AlertHexaIcon />,
     name: "Moderation",
-    path: "moderation",
+    path: "/moderation",
+    pro: false,
     // subItems: [
     //   {
     //     name: "Users Management",
