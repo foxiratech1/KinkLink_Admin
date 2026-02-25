@@ -10,7 +10,7 @@ export default function Home() {
   return (
     <>
       <PageMeta
-        title="KinkLink Dashboard | Sell and Buy Your Photos"
+        title="KinkLink Dashboard"
         description="Dashboard page for KinkLink, where you can monitor your photo sales and purchases."
       />
 

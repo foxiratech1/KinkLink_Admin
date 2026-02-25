@@ -10,6 +10,11 @@ export const API_ROUTES = {
     GET_PROFILE: "/api/admin/profile-details",
     UPDATE_PROFILE: "/api/admin/update-profile",
   },
+  DASHBOARD: {
+    GET_USER_VERIFICATION_STATISTICS:
+      "api/admin/get-dashboard-verification-stats",
+    GET_DASHBOARD_COUNT: "api/admin/get-dashboard-count",
+  },
   USERS: {
     GET_ALL: "api/admin/users",
     GET_PENDING: "api/admin/users-pending",

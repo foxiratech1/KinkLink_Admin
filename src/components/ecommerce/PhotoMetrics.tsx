@@ -36,7 +36,6 @@
 //   },
 // ];
 
-
 //   return (
 //     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 md:gap-6">
 //       {metrics.map((item, index) => {
@@ -78,7 +77,9 @@
 //     </div>
 //   );
 // }
+import { useEffect, useState } from "react";
 import { HiArrowUp, HiArrowDown } from "react-icons/hi";
+import { getDashboardCounts } from "../../api/dashboardapis";
 
 interface Metric {
   title: string;
@@ -88,12 +89,29 @@ interface Metric {
 }
 
 export default function PhotoMetrics() {
+  const [dashboardData, setDashboardData] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await getDashboardCounts();
+
+        if (response) {
+          setDashboardData(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching dashboard stats:", error);
+      }
+    };
+
+    fetchStats();
+  }, []);
   const metrics: Metric[] = [
     {
       title: "Total users",
-      value: "2,512",
+      value: dashboardData?.user?.count,
       trend: "up",
-      percentage: "0.3%",
+      percentage: dashboardData?.user?.percentage,
     },
     {
       title: "Online now",
@@ -127,12 +145,8 @@ export default function PhotoMetrics() {
           className="rounded-2xl bg-white p-5"
           style={{ border: "1px solid #9B43BB40" }}
         >
-          {/* Title */}
-          <p className="text-sm font-medium text-gray-600">
-            {item.title}
-          </p>
+          <p className="text-sm font-medium text-gray-600">{item.title}</p>
 
-          {/* Value + Trend */}
           <div className="mt-3 flex items-center justify-between">
             <h3 className="text-2xl font-semibold text-gray-900">
               {item.value}
@@ -140,16 +154,11 @@ export default function PhotoMetrics() {
 
             {item.trend && item.percentage && (
               <div
-                className={`flex items-center gap-1 text-sm font-medium ${item.trend === "up"
-                  ? "text-green-600"
-                  : "text-[#A50134]"
-                  }`}
+                className={`flex items-center gap-1 text-sm font-medium ${
+                  item.trend === "up" ? "text-green-600" : "text-[#A50134]"
+                }`}
               >
-                {item.trend === "up" ? (
-                  <HiArrowUp />
-                ) : (
-                  <HiArrowDown />
-                )}
+                {item.trend === "up" ? <HiArrowUp /> : <HiArrowDown />}
                 {item.percentage}
               </div>
             )}

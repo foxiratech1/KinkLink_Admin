@@ -60,10 +60,7 @@ const UserVerificationList = ({ status }: UserVerificationListProps) => {
         setTotalPages(response.pagination.totalPages);
       }
     } catch (error: any) {
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to fetch verification requests",
-      );
+      throw error;
     } finally {
       setLoading(false);
     }
