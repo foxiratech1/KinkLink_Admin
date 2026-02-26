@@ -830,7 +830,7 @@ const VerificationSection: React.FC<VerificationSectionProps> = ({
               </div>
             ) : (
               <div className="h-48 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-2xl text-gray-400 italic text-xs">
-                No document
+                document has been deleted
               </div>
             )}
           </div>
