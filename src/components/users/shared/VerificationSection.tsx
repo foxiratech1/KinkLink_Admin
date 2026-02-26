@@ -576,24 +576,11 @@ const VerificationSection: React.FC<VerificationSectionProps> = ({
   const [rejectionReason, setRejectionReason] = useState("");
   const [rejectType, setRejectType] = useState<any>(null);
 
+  // --- DELETE IMAGE MODAL STATE ---
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [typeToDelete, setTypeToDelete] = useState<
-    "selfie" | "id" | "partnerSelfie" | "partnerId" | null
-  >(null);
+  const [typeToDelete, setTypeToDelete] = useState<any>(null);
+
   if (!verification || !verification._id) return null;
-
-  const handleOpenRejectModal = (type: any) => {
-    setRejectType(type);
-    setRejectModalOpen(true);
-  };
-
-  const submitRejection = async () => {
-    if (rejectType && rejectionReason.trim()) {
-      await onReject(rejectType, rejectionReason);
-      setRejectModalOpen(false);
-      setRejectionReason("");
-    }
-  };
 
   const selfieStatus = verification?.selfie?.status;
   const partnerSelfieStatus = verification?.partnerSelfie?.status;
@@ -613,14 +600,34 @@ const VerificationSection: React.FC<VerificationSectionProps> = ({
     ? "grid grid-cols-1 md:grid-cols-2 gap-8"
     : "flex flex-col max-w-2xl";
 
-  // Reusable Delete Button Component
+  // --- HANDLERS ---
+  const handleOpenRejectModal = (type: any) => {
+    setRejectType(type);
+    setRejectModalOpen(true);
+  };
 
-  // --- DELETE LOGIC ---
+  const submitRejection = async () => {
+    if (rejectType && rejectionReason.trim()) {
+      await onReject(rejectType, rejectionReason);
+      setRejectModalOpen(false);
+      setRejectionReason("");
+    }
+  };
+
   const handleOpenDeleteModal = (type: any) => {
     setTypeToDelete(type);
     setDeleteModalOpen(true);
   };
 
+  const confirmImageDelete = async () => {
+    if (typeToDelete) {
+      await onDeleteImage(typeToDelete);
+      setDeleteModalOpen(false);
+      setTypeToDelete(null);
+    }
+  };
+
+  // --- MODERN DELETE BUTTON ICON ---
   const DeleteButton = ({ type }: { type: any }) => (
     <button
       onClick={(e) => {
@@ -628,7 +635,8 @@ const VerificationSection: React.FC<VerificationSectionProps> = ({
         handleOpenDeleteModal(type);
       }}
       disabled={loadingStates[type] || loadingGlobal}
-      className="absolute top-3 right-3 p-2 bg-brand-500 hover:bg-brand-700 text-white rounded-full shadow-lg z-20 transition-all active:scale-90"
+      className="absolute top-3 right-3 p-2.5 bg-white/10 backdrop-blur-md border border-white/20 hover:bg-rose-600 text-white rounded-xl shadow-xl z-20 transition-all duration-300 group active:scale-95"
+      title="Delete Image"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -650,13 +658,7 @@ const VerificationSection: React.FC<VerificationSectionProps> = ({
       </svg>
     </button>
   );
-  const confirmImageDelete = async () => {
-    if (typeToDelete) {
-      await onDeleteImage(typeToDelete);
-      setDeleteModalOpen(false);
-      setTypeToDelete(null);
-    }
-  };
+
   return (
     <div className="bg-white dark:bg-gray-900 px-6 py-6">
       <div className="flex items-center justify-between mb-8">
@@ -678,9 +680,8 @@ const VerificationSection: React.FC<VerificationSectionProps> = ({
             Live Selfie
           </h3>
         </div>
-
         <div className={gridClassName}>
-          {/* User Selfie */}
+          {/* User Card */}
           <div className="relative bg-gray-50 dark:bg-gray-800/50 p-4 rounded-3xl border dark:border-gray-800">
             <div className="flex justify-between items-center mb-4">
               <DetailItem label="Status" value={selfieStatus} highlight />
@@ -708,7 +709,7 @@ const VerificationSection: React.FC<VerificationSectionProps> = ({
                 <DeleteButton type="selfie" />
                 <img
                   src={`${IMAGE_URL}/uploads/selfie/${verification.selfie.image}`}
-                  className="w-full h-72 object-cover rounded-2xl cursor-pointer"
+                  className="w-full h-80 md:h-[450px] object-contain bg-gray-200 dark:bg-black rounded-2xl cursor-pointer shadow-inner"
                   onClick={() =>
                     onImageClick(
                       `${IMAGE_URL}/uploads/selfie/${verification.selfie.image}`,
@@ -716,14 +717,18 @@ const VerificationSection: React.FC<VerificationSectionProps> = ({
                   }
                 />
               </div>
+            ) : selfieStatus === "Approved" || selfieStatus === "Rejected" ? (
+              <div className="h-72 flex items-center justify-center bg-emerald-50 dark:bg-emerald-900/10 rounded-2xl text-emerald-600 font-bold text-xs border border-dashed border-emerald-200">
+                ✓ Selfie verified & image deleted
+              </div>
             ) : (
               <div className="h-72 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-2xl text-gray-400 italic text-xs">
-                Image has been deleted
+                Waiting for selfie upload...
               </div>
             )}
           </div>
 
-          {/* Partner Selfie */}
+          {/* Partner Card */}
           {isCouple && (
             <div className="relative bg-gray-50 dark:bg-gray-800/50 p-4 rounded-3xl border dark:border-gray-800">
               <div className="flex justify-between items-center mb-4">
@@ -732,38 +737,41 @@ const VerificationSection: React.FC<VerificationSectionProps> = ({
                   value={partnerSelfieStatus}
                   highlight
                 />
-                <div className="flex gap-2">
-                  {partnerSelfieStatus !== "Approved" &&
-                    verification.partnerSelfie?.image && (
-                      <>
-                        <button
-                          onClick={() => onApprove("partnerSelfie")}
-                          className="px-3 py-1 text-[10px] font-bold bg-emerald-500 text-white rounded"
-                        >
-                          APPROVE
-                        </button>
-                        <button
-                          onClick={() => handleOpenRejectModal("partnerSelfie")}
-                          className="px-3 py-1 text-[10px] font-bold bg-rose-500 text-white rounded"
-                        >
-                          REJECT
-                        </button>
-                      </>
-                    )}
-                </div>
+                {partnerSelfieStatus !== "Approved" &&
+                  verification.partnerSelfie?.image && (
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => onApprove("partnerSelfie")}
+                        className="px-3 py-1 text-[10px] font-bold bg-emerald-500 text-white rounded"
+                      >
+                        APPROVE
+                      </button>
+                      <button
+                        onClick={() => handleOpenRejectModal("partnerSelfie")}
+                        className="px-3 py-1 text-[10px] font-bold bg-rose-500 text-white rounded"
+                      >
+                        REJECT
+                      </button>
+                    </div>
+                  )}
               </div>
               {verification.partnerSelfie?.image ? (
                 <div className="relative group">
                   <DeleteButton type="partnerSelfie" />
                   <img
                     src={`${IMAGE_URL}/uploads/partnerSelfie/${verification.partnerSelfie.image}`}
-                    className="w-full h-72 object-cover rounded-2xl cursor-pointer"
+                    className="w-full h-80 md:h-[450px] object-contain bg-gray-200 dark:bg-black rounded-2xl cursor-pointer"
                     onClick={() =>
                       onImageClick(
                         `${IMAGE_URL}/uploads/partnerSelfie/${verification.partnerSelfie.image}`,
                       )
                     }
                   />
+                </div>
+              ) : partnerSelfieStatus === "Approved" ||
+                partnerSelfieStatus === "Rejected" ? (
+                <div className="h-72 flex items-center justify-center bg-emerald-50 dark:bg-emerald-900/10 rounded-2xl text-emerald-600 font-bold text-xs border border-dashed border-emerald-200">
+                  ✓ Partner selfie verified & image deleted
                 </div>
               ) : (
                 <div className="h-72 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-2xl text-gray-400 italic text-xs">
@@ -792,9 +800,8 @@ const VerificationSection: React.FC<VerificationSectionProps> = ({
             </button>
           )}
         </div>
-
         <div className={gridClassName}>
-          {/* Primary ID */}
+          {/* User ID Card */}
           <div className="relative bg-gray-50 dark:bg-gray-800/50 p-4 rounded-3xl border dark:border-gray-800">
             <div className="flex justify-between items-center mb-4">
               <DetailItem label="ID Status" value={idStatus} highlight />
@@ -820,7 +827,7 @@ const VerificationSection: React.FC<VerificationSectionProps> = ({
                 <DeleteButton type="id" />
                 <img
                   src={`${IMAGE_URL}/uploads/document/${verification.verifyId.image}`}
-                  className="w-full h-48 object-contain bg-gray-200 dark:bg-black rounded-2xl cursor-pointer"
+                  className="w-full h-64 md:h-80 object-contain bg-gray-200 dark:bg-black rounded-2xl cursor-pointer"
                   onClick={() =>
                     onImageClick(
                       `${IMAGE_URL}/uploads/document/${verification.verifyId.image}`,
@@ -828,19 +835,23 @@ const VerificationSection: React.FC<VerificationSectionProps> = ({
                   }
                 />
               </div>
+            ) : idStatus === "Approved" || idStatus === "Rejected" ? (
+              <div className="h-48 flex items-center justify-center bg-amber-50 dark:bg-amber-900/10 rounded-2xl text-amber-600 font-bold text-xs border border-dashed border-amber-200">
+                ✓ ID verified & image deleted
+              </div>
             ) : (
               <div className="h-48 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-2xl text-gray-400 italic text-xs">
-                document has been deleted
+                No ID uploaded
               </div>
             )}
           </div>
 
-          {/* Partner ID */}
+          {/* Partner ID Card */}
           {isCouple && (
             <div className="relative bg-gray-50 dark:bg-gray-800/50 p-4 rounded-3xl border dark:border-gray-800">
               <div className="flex justify-between items-center mb-4">
                 <DetailItem
-                  label="Partner ID"
+                  label="Partner ID Status"
                   value={partnerIdStatus}
                   highlight
                 />
@@ -870,14 +881,19 @@ const VerificationSection: React.FC<VerificationSectionProps> = ({
                     className="w-full h-48 object-contain bg-gray-200 dark:bg-black rounded-2xl cursor-pointer"
                     onClick={() =>
                       onImageClick(
-                        `${IMAGE_URL}/uploads/partnerId/${verification.partnerVerifyId.image}`,
+                        `${IMAGE_URL}/uploads/partnerDocument/${verification.partnerVerifyId.image}`,
                       )
                     }
                   />
                 </div>
+              ) : partnerIdStatus === "Approved" ||
+                partnerIdStatus === "Rejected" ? (
+                <div className="h-48 flex items-center justify-center bg-amber-50 dark:bg-amber-900/10 rounded-2xl text-amber-600 font-bold text-xs border border-dashed border-amber-200">
+                  ✓ Partner ID verified & image deleted
+                </div>
               ) : (
                 <div className="h-48 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-2xl text-gray-400 italic text-xs">
-                  No partner document
+                  Waiting for partner ID...
                 </div>
               )}
             </div>
@@ -897,13 +913,15 @@ const VerificationSection: React.FC<VerificationSectionProps> = ({
         </div>
         <button
           onClick={onSuspend}
-          className="bg-rose-600 text-white px-5 py-2 rounded-xl text-xs font-bold shadow-lg shadow-rose-500/30 hover:bg-rose-700 transition-all"
+          className="bg-rose-600 text-white px-5 py-2 rounded-xl text-xs font-bold shadow-lg hover:bg-rose-700 transition-all"
         >
           {verification.overallStatus === "Suspended"
             ? "SUSPENDED"
             : "SUSPEND NOW"}
         </button>
       </div>
+
+      {/* --- MODAL: DELETE CONFIRMATION --- */}
       {deleteModalOpen && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
           <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden animate-in fade-in zoom-in duration-200">
@@ -928,32 +946,31 @@ const VerificationSection: React.FC<VerificationSectionProps> = ({
                 Are you sure?
               </h3>
               <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
-                You are about to delete the{" "}
-                <span className="font-bold text-brand-500">{typeToDelete}</span>{" "}
-                image. This action cannot be undone.
+                Delete{" "}
+                <span className="font-bold text-rose-500">{typeToDelete}</span>{" "}
+                image? This action cannot be undone.
               </p>
               <div className="flex gap-3">
                 <button
                   onClick={() => setDeleteModalOpen(false)}
-                  className="flex-1 py-3 text-sm font-bold text-gray-500 bg-gray-100 dark:bg-gray-700 rounded-2xl hover:bg-gray-200 transition-all"
+                  className="flex-1 py-3 text-sm font-bold text-gray-500 bg-gray-100 dark:bg-gray-700 rounded-2xl"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={confirmImageDelete}
-                  disabled={typeToDelete ? loadingStates[typeToDelete] : false}
-                  className="flex-1 py-3 text-sm font-bold text-white bg-brand-500 rounded-2xl shadow-lg shadow-rose-500/30 hover:bg-rose-600 disabled:opacity-50 transition-all"
+                  disabled={loadingGlobal}
+                  className="flex-1 py-3 text-sm font-bold text-white bg-rose-600 rounded-2xl"
                 >
-                  {typeToDelete && loadingStates[typeToDelete]
-                    ? "Deleting..."
-                    : "Yes, Delete"}
+                  Yes, Delete
                 </button>
               </div>
             </div>
           </div>
         </div>
       )}
-      {/* Reject Modal */}
+
+      {/* --- MODAL: REJECT REASON --- */}
       {rejectModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
           <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
@@ -961,13 +978,10 @@ const VerificationSection: React.FC<VerificationSectionProps> = ({
               <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white text-center">
                 Rejection Reason
               </h3>
-              <p className="text-xs text-gray-500 text-center mb-6">
-                Explain why the {rejectType} was rejected.
-              </p>
               <textarea
                 value={rejectionReason}
                 onChange={(e) => setRejectionReason(e.target.value)}
-                placeholder="e.g., Image is blurry, ID expired..."
+                placeholder="Reason for rejection..."
                 className="w-full border-2 border-gray-100 dark:border-gray-700 rounded-2xl p-4 text-sm dark:bg-gray-900 focus:border-rose-500 outline-none transition-all"
                 rows={4}
               />
@@ -981,7 +995,7 @@ const VerificationSection: React.FC<VerificationSectionProps> = ({
                 <button
                   onClick={submitRejection}
                   disabled={!rejectionReason.trim()}
-                  className="flex-1 py-3 text-sm font-bold text-white bg-rose-500 rounded-2xl shadow-lg shadow-rose-500/30 disabled:opacity-50"
+                  className="flex-1 py-3 text-sm font-bold text-white bg-rose-500 rounded-2xl shadow-lg"
                 >
                   Reject Now
                 </button>
