@@ -635,7 +635,7 @@ const VerificationSection: React.FC<VerificationSectionProps> = ({
         handleOpenDeleteModal(type);
       }}
       disabled={loadingStates[type] || loadingGlobal}
-      className="absolute top-3 right-3 p-2.5 bg-white/10 backdrop-blur-md border border-white/20 hover:bg-rose-600 text-white rounded-xl shadow-xl z-20 transition-all duration-300 group active:scale-95"
+      className="absolute top-3 right-3 p-2.5 backdrop-blur-md border border-white/20 bg-brand-500 hover:bg-brand-600 text-white rounded-xl shadow-xl z-20 transition-all duration-300 group active:scale-95"
       title="Delete Image"
     >
       <svg
@@ -760,7 +760,7 @@ const VerificationSection: React.FC<VerificationSectionProps> = ({
                   <DeleteButton type="partnerSelfie" />
                   <img
                     src={`${IMAGE_URL}/uploads/partnerSelfie/${verification.partnerSelfie.image}`}
-                    className="w-full h-80 md:h-[450px] object-contain bg-gray-200 dark:bg-black rounded-2xl cursor-pointer"
+                    className="w-full h-80 md:h-[380px] object-contain bg-gray-200 dark:bg-black rounded-2xl cursor-pointer"
                     onClick={() =>
                       onImageClick(
                         `${IMAGE_URL}/uploads/partnerSelfie/${verification.partnerSelfie.image}`,
@@ -827,7 +827,7 @@ const VerificationSection: React.FC<VerificationSectionProps> = ({
                 <DeleteButton type="id" />
                 <img
                   src={`${IMAGE_URL}/uploads/document/${verification.verifyId.image}`}
-                  className="w-full h-64 md:h-80 object-contain bg-gray-200 dark:bg-black rounded-2xl cursor-pointer"
+                  className="w-full h-64 md:h-78 object-contain bg-gray-200 dark:bg-black rounded-2xl cursor-pointer"
                   onClick={() =>
                     onImageClick(
                       `${IMAGE_URL}/uploads/document/${verification.verifyId.image}`,
