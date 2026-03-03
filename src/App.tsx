@@ -51,7 +51,7 @@ export default function App() {
         }
       }
     };
-
+    //New window
     window.addEventListener("storage", handleStorageChange);
     return () => window.removeEventListener("storage", handleStorageChange);
   }, [dispatch]);
