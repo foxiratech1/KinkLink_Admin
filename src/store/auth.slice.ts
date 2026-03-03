@@ -86,6 +86,24 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
     },
   },
+  // extraReducers: (builder) => {
+  //   builder
+  //     .addCase(login.pending, (state) => {
+  //       state.loading = true;
+  //       state.error = null;
+  //     })
+  //     .addCase(login.fulfilled, (state, action) => {
+  //       state.loading = false;
+
+  //       if (action.payload.adminId) {
+  //         state.adminId = action.payload.adminId;
+  //       }
+  //     })
+  //     .addCase(login.rejected, (state, action) => {
+  //       state.loading = false;
+  //       state.error = action.payload as string;
+  //     });
+  // },
   extraReducers: (builder) => {
     builder
       .addCase(login.pending, (state) => {
@@ -102,8 +120,20 @@ const authSlice = createSlice({
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+
+      // 🔥 ADD THIS PART
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.token = null;
+        state.adminId = null;
+        state.isAuthenticated = false;
+      })
+      .addCase(logoutUser.rejected, (state) => {
+        state.token = null;
+        state.adminId = null;
+        state.isAuthenticated = false;
       });
-  },
+  }
 });
 
 /* ================= EXPORTS ================= */

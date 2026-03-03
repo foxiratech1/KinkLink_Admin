@@ -3,7 +3,7 @@ import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { useAppDispatch } from "../../store/hooks";
 import { logoutUser } from "../../store/auth.slice";
-import { useNavigate } from "react-router";
+// import { useNavigate } from "react-router";
 import { useProfile } from "../../context/ProfileContext";
 import { adminProfileImage } from "../../utils/image";
 
@@ -11,7 +11,7 @@ export default function UserDropdown() {
   const { profile } = useProfile();
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   function toggleDropdown() {
     setIsOpen(!isOpen);
   }
@@ -19,16 +19,21 @@ export default function UserDropdown() {
   function closeDropdown() {
     setIsOpen(false);
   }
-  const handleLogout = async () => {
-    //  Handle side effects in component (localStorage cleanup)
+  // const handleLogout = async () => {
+  //   //  Handle side effects in component (localStorage cleanup)
 
-    // Call API and update Redux state
+  //   // Call API and update Redux state
+  //   await dispatch(logoutUser());
+  //   localStorage.removeItem("token");
+  //   sessionStorage.removeItem("temp_remember_me");
+  //   navigate("/signin");
+  // };
+  const handleLogout = async () => {
     await dispatch(logoutUser());
+
     localStorage.removeItem("token");
     sessionStorage.removeItem("temp_remember_me");
-    navigate("/signin");
   };
-
   return (
     <div className="relative">
       <button
@@ -51,9 +56,8 @@ export default function UserDropdown() {
           {profile?.lastName ? profile?.lastName : "Admin"}
         </span>
         <svg
-          className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${
-            isOpen ? "rotate-180" : ""
-          }`}
+          className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""
+            }`}
           width="18"
           height="20"
           viewBox="0 0 18 20"
