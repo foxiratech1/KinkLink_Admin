@@ -16,10 +16,9 @@ const InterestListComp = ({ refreshTrigger, onEdit }: InterestListCompProps) => 
     const [loading, setLoading] = useState(false);
     const [deletingId, setDeletingId] = useState<string | null>(null);
 
-    // Pagination States
     const [currentPage, setCurrentPage] = useState(1);
     const [totalInterests, setTotalInterests] = useState(0);
-    const [totalPages, setTotalPages] = useState(0); // API se totalPages lene ke liye
+    const [totalPages, setTotalPages] = useState(0); 
     const ITEMS_PER_PAGE = 10;
 
     const fetchInterests = useCallback(async () => {
@@ -30,11 +29,9 @@ const InterestListComp = ({ refreshTrigger, onEdit }: InterestListCompProps) => 
                 limit: ITEMS_PER_PAGE,
             });
 
-            // JSON structure ke hisaab se data set karna
             if (response?.data) {
                 setInterests(response.data);
                 
-                // Pagination metadata set karna
                 if (response.pagination) {
                     setTotalInterests(response.pagination.total);
                     setTotalPages(response.pagination.totalPages);
@@ -51,7 +48,6 @@ const InterestListComp = ({ refreshTrigger, onEdit }: InterestListCompProps) => 
         fetchInterests();
     }, [fetchInterests, refreshTrigger]);
 
-    // Delete handler
     const handleDelete = async (id: string, name: string) => {
         if (!confirm(`Are you sure you want to delete "${name}"?`)) {
             return;
@@ -61,8 +57,6 @@ const InterestListComp = ({ refreshTrigger, onEdit }: InterestListCompProps) => 
         try {
             await deleteInterestApi(id);
             toast.success("Interest deleted successfully");
-            
-            // Agar page ka aakhri item delete ho raha hai, toh pichle page par bhej do
             if (interests.length === 1 && currentPage > 1) {
                 setCurrentPage(prev => prev - 1);
             } else {
