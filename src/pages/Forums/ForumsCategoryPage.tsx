@@ -28,7 +28,6 @@ const ForumsCategoryPage = () => {
                 description="Manage forum categories for the application"
             />
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                {/* Left Side - Add/Edit Form */}
                 <div className="lg:col-span-1">
                     <AddForumCategoryComp
                         editingCategory={editingCategory}
