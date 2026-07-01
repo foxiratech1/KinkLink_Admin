@@ -34,6 +34,7 @@ import SystemIssueManage from "./pages/SystemIssues/SystemIssueManage";
 import UserVerificationPage from "./pages/Users/UserVerificationPage";
 import Analytics from "./pages/Analytics/Analytics";
 import SubAdminManagement from "./pages/Admin/SubAdminManagement";
+import PaymentsPage from "./pages/Payments/PaymentsPage";
 import { useEffect } from "react";
 import { useAppDispatch } from "./store/hooks";
 import { logout, setAuthSuccess } from "./store/auth.slice";
@@ -102,6 +103,9 @@ export default function App() {
               <Route element={<PermissionRoute permission="create_subadmin" />}>
                 <Route path="/sub-admins" element={<SubAdminManagement />} />
               </Route>
+
+              {/* Payments */}
+              <Route path="/payments/subscriptions" element={<PaymentsPage />} />
 
               {/* Others Page */}
               <Route path="/profile" element={<UserProfiles />} />

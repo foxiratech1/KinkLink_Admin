@@ -175,15 +175,44 @@
 //     </div>
 //   );
 // }
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
+import { getDashboardAnalytics } from "../../api/dashboardapis";
 
 type FilterType = "day" | "week" | "month";
 
 export default function StatisticsChart() {
   const [filter, setFilter] = useState<FilterType>("week");
   const [selectedMonth, setSelectedMonth] = useState("Jan");
+  const [loading, setLoading] = useState(false);
+  const [chartData, setChartData] = useState<{
+    categories: string[];
+    series: { name: string; data: number[] }[];
+  }>({
+    categories: [],
+    series: []
+  });
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      setLoading(true);
+      try {
+        const response = await getDashboardAnalytics(
+          filter,
+          filter === "month" ? selectedMonth : undefined
+        );
+        if (response.success) {
+          setChartData(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching dashboard analytics", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAnalytics();
+  }, [filter, selectedMonth]);
 
   const options: ApexOptions = {
     chart: {
@@ -198,48 +227,11 @@ export default function StatisticsChart() {
     },
     dataLabels: { enabled: false },
     xaxis: {
-      categories:
-        filter === "day"
-          ? ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-          : filter === "week"
-            ? ["Week 1", "Week 2", "Week 3", "Week 4"]
-            : [
-              "Jan",
-              "Feb",
-              "Mar",
-              "Apr",
-              "May",
-              "Jun",
-              "Jul",
-              "Aug",
-              "Sep",
-              "Oct",
-              "Nov",
-              "Dec",
-            ],
+      categories: chartData.categories,
     },
   };
 
-  const series = [
-    {
-      name: "Messages Sent",
-      data: filter === "day" ? [20, 30, 25, 40, 35, 50, 45] :
-        filter === "week" ? [120, 150, 130, 180] :
-          [180, 190, 170, 160, 175, 165, 170, 205, 230, 210, 240, 235],
-    },
-    {
-      name: "Events Created",
-      data: filter === "day" ? [5, 10, 8, 12, 9, 15, 11] :
-        filter === "week" ? [30, 40, 35, 50] :
-          [40, 30, 50, 40, 55, 40, 70, 100, 110, 120, 150, 140],
-    },
-    {
-      name: "Posts Created",
-      data: filter === "day" ? [12, 18, 15, 20, 22, 25, 19] :
-        filter === "week" ? [80, 95, 90, 110] :
-          [90, 100, 85, 95, 105, 98, 120, 135, 150, 140, 165, 170],
-    },
-  ];
+  const series = chartData.series;
 
   return (
     <div className="rounded-2xl border bg-white p-6 dark:bg-gray-900">
@@ -257,7 +249,7 @@ export default function StatisticsChart() {
             <button
               key={item}
               onClick={() => setFilter(item as FilterType)}
-              className={`px-3 py-1 rounded-lg text-sm ${filter === item
+              className={`px-3 py-1 rounded-lg text-sm transition-all duration-150 ${filter === item
                   ? "bg-brand-500 text-white"
                   : "bg-gray-100 dark:bg-gray-800"
                 }`}
@@ -284,7 +276,17 @@ export default function StatisticsChart() {
         </div>
       </div>
 
-      <Chart options={options} series={series} type="area" height={320} />
+      {loading ? (
+        <div className="flex items-center justify-center h-[320px]">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500"></div>
+        </div>
+      ) : chartData.series.length > 0 ? (
+        <Chart options={options} series={series} type="area" height={320} />
+      ) : (
+        <div className="flex items-center justify-center h-[320px] text-gray-400">
+          No Data Available
+        </div>
+      )}
     </div>
   );
 }

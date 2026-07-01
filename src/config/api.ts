@@ -14,6 +14,8 @@ export const API_ROUTES = {
     GET_USER_VERIFICATION_STATISTICS:
       "api/admin/get-dashboard-verification-stats",
     GET_DASHBOARD_COUNT: "api/admin/get-dashboard-count",
+    GET_DASHBOARD_ANALYTICS: "api/admin/get-dashboard-analytics",
+    GET_FUNNEL_CITY_ANALYTICS: "api/admin/get-funnel-city-analytics",
   },
   USERS: {
     GET_ALL: "api/admin/users",

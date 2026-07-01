@@ -134,7 +134,7 @@ interface CityData {
     value: number;
 }
 
-const data: Record<FilterType, CityData[]> = {
+const DEFAULT_CITIES: Record<FilterType, CityData[]> = {
     All: [
         { name: "Dublin", value: 5401 },
         { name: "Cork", value: 1054 },
@@ -162,21 +162,36 @@ const gradients = [
     "from-[#E25485] to-[#FCA0C3]",
 ];
 
-export default function TopCities() {
+export default function TopCities({
+    cities = DEFAULT_CITIES,
+    loading = false
+}: {
+    cities?: Record<FilterType, CityData[]>;
+    loading?: boolean;
+}) {
     const [filter, setFilter] = useState<FilterType>("All");
 
-    const cities = data[filter];
-    const maxValue = Math.max(...cities.map((c) => c.value));
+    if (loading) {
+        return (
+            <div className="rounded-2xl bg-white p-6 shadow-sm border border-gray-100 h-full min-h-[340px] flex flex-col justify-center items-center dark:bg-gray-900 dark:border-gray-800">
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-brand-500 border-t-transparent"></div>
+            </div>
+        );
+    }
+
+    const activeCitiesMap = cities && Object.keys(cities).length > 0 ? cities : DEFAULT_CITIES;
+    const activeCities = activeCitiesMap[filter] || [];
+    const maxValue = activeCities.length > 0 ? Math.max(...activeCities.map((c) => c.value)) : 1;
 
     return (
-        <div className="rounded-2xl bg-white p-6 shadow-sm border border-gray-100 h-full">
+        <div className="rounded-2xl bg-white p-6 shadow-sm border border-gray-100 h-full dark:bg-gray-900 dark:border-gray-800">
             {/* Header */}
             <div className="mb-6 flex items-center justify-between">
-                <h3 className="text-lg font-bold text-gray-800">
+                <h3 className="text-lg font-bold text-gray-800 dark:text-white">
                     Top Cities
                 </h3>
 
-                <div className="flex bg-gray-100 p-1 rounded-lg">
+                <div className="flex bg-gray-100 dark:bg-gray-850 p-1 rounded-lg">
                     {(["All", "Verified", "Premium"] as FilterType[]).map((item) => (
                         <button
                             key={item}
@@ -184,7 +199,7 @@ export default function TopCities() {
                             className={`px-4 py-1.5 text-sm font-medium rounded-md transition
                 ${filter === item
                                     ? "bg-gradient-to-r from-[#A50134] to-[#C44D76] text-white shadow-md"
-                                    : "text-gray-600 hover:text-gray-800"
+                                    : "text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white"
                                 }`}
                         >
                             {item}
@@ -195,12 +210,12 @@ export default function TopCities() {
 
             {/* Bars */}
             <div className="space-y-4">
-                {cities.map((city, index) => {
+                {activeCities.map((city, index) => {
                     const width = (city.value / maxValue) * 100;
 
                     return (
                         <div key={index} className="relative">
-                            <div className="h-10 w-full rounded-xl bg-gray-100" />
+                            <div className="h-10 w-full rounded-xl bg-gray-100 dark:bg-gray-800/50" />
 
                             <div
                                 className={`absolute inset-y-0 left-0 flex items-center justify-between 

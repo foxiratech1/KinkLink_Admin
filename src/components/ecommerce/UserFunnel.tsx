@@ -129,14 +129,20 @@ interface FunnelStep {
     change?: string;
 }
 
-const funnel: FunnelStep[] = [
+const DEFAULT_FUNNEL: FunnelStep[] = [
     { label: "Registered", value: 658 },
     { label: "Verified", value: 592, change: "-10%" },
     { label: "Completed Profile", value: 503, change: "-15%" },
     { label: "First Action", value: 463, change: "-8%" },
 ];
 
-export default function UserFunnel() {
+export default function UserFunnel({
+    funnel = DEFAULT_FUNNEL,
+    loading = false
+}: {
+    funnel?: FunnelStep[];
+    loading?: boolean;
+}) {
     const gradients = [
         "from-[#A50134] to-[#C44D76]",
         "from-[#B91C4F] to-[#D8688F]",
@@ -144,20 +150,30 @@ export default function UserFunnel() {
         "from-[#E25485] to-[#FCA0C3]",
     ];
 
+    if (loading) {
+        return (
+            <div className="rounded-2xl bg-white p-6 shadow-sm border border-gray-100 w-full min-h-[340px] flex flex-col justify-center items-center dark:bg-gray-900 dark:border-gray-800">
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-brand-500 border-t-transparent"></div>
+            </div>
+        );
+    }
+
+    const activeFunnel = funnel && funnel.length > 0 ? funnel : DEFAULT_FUNNEL;
+
     return (
-        <div className="rounded-2xl bg-white p-6 shadow-sm border border-gray-100 w-full">
-            <h3 className="mb-6 text-lg font-bold text-gray-800">
+        <div className="rounded-2xl bg-white p-6 shadow-sm border border-gray-100 w-full dark:bg-gray-900 dark:border-gray-800">
+            <h3 className="mb-6 text-lg font-bold text-gray-800 dark:text-white">
                 Activation Funnel
             </h3>
 
             <div className="relative pl-10 space-y-6">
                 {/* Vertical Timeline Line */}
-                <div className="absolute left-5 top-0 bottom-0 w-0.5 bg-gray-200" />
+                <div className="absolute left-5 top-0 bottom-0 w-0.5 bg-gray-200 dark:bg-gray-800" />
 
-                {funnel.map((step, index) => (
+                {activeFunnel.map((step, index) => (
                     <div
                         key={step.label}
-                        className={`relative p-4 rounded-xl bg-gradient-to-r ${gradients[index]
+                        className={`relative p-4 rounded-xl bg-gradient-to-r ${gradients[index % gradients.length]
                             } text-white transition-all duration-300 hover:shadow-lg`}
                         style={{
                             marginLeft: `${index * 14}px`,
@@ -165,9 +181,9 @@ export default function UserFunnel() {
                     >
                         {/* Timeline Circle */}
                         <div className="absolute -left-6 top-1/2 -translate-y-1/2">
-                            <div className="w-5 h-5 rounded-full bg-white shadow-md flex items-center justify-center">
+                            <div className="w-5 h-5 rounded-full bg-white dark:bg-gray-800 shadow-md flex items-center justify-center">
                                 <div
-                                    className={`w-2.5 h-2.5 rounded-full bg-gradient-to-r ${gradients[index]}`}
+                                    className={`w-2.5 h-2.5 rounded-full bg-gradient-to-r ${gradients[index % gradients.length]}`}
                                 />
                             </div>
                         </div>
