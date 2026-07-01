@@ -56,4 +56,9 @@ export const API_ROUTES = {
     DELETE_SUBADMIN: (id: string) => `api/admin/delete-subadmin/${id}`,
     UPDATE_SUBADMIN: (id: string) => `api/admin/update-subadmin/${id}`,
   },
+  STICKER: {
+    CREATE: "api/sticker/create-stickers",
+    GET_ALL: "api/sticker/get-admin-sticker-packs",
+    DELETE: (id: string) => `api/sticker/delete-sticker/${id}`,
+  },
 };

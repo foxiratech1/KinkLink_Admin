@@ -97,7 +97,11 @@ export default function PhotoMetrics() {
         const response = await getDashboardCounts();
 
         if (response) {
-          setDashboardData(response.data);
+          if (response.success && response.data) {
+            setDashboardData(response.data);
+          } else {
+            setDashboardData(response);
+          }
         }
       } catch (error) {
         console.error("Error fetching dashboard stats:", error);
@@ -106,34 +110,90 @@ export default function PhotoMetrics() {
 
     fetchStats();
   }, []);
+
+  const getMetricValue = (key: string, defaultVal: string) => {
+    if (!dashboardData) return defaultVal;
+
+    const obj = dashboardData[key] ||
+      dashboardData[key.toLowerCase()] ||
+      dashboardData[key + "s"] ||
+      dashboardData[key.toLowerCase() + "s"] ||
+      dashboardData[key + "Now"] ||
+      dashboardData[key + "Signups"] ||
+      dashboardData[key + "Reports"] ||
+      dashboardData[key + "Count"];
+
+    if (obj === undefined || obj === null) return defaultVal;
+    if (typeof obj === "object") {
+      return (obj.count !== undefined && obj.count !== null) ? obj.count.toString() : defaultVal;
+    }
+    return obj.toString();
+  };
+
+  const getMetricPercentage = (key: string, defaultVal?: string) => {
+    if (!dashboardData) return defaultVal;
+    const obj = dashboardData[key] ||
+      dashboardData[key.toLowerCase()] ||
+      dashboardData[key + "s"] ||
+      dashboardData[key.toLowerCase() + "s"] ||
+      dashboardData[key + "Now"] ||
+      dashboardData[key + "Signups"] ||
+      dashboardData[key + "Reports"] ||
+      dashboardData[key + "Count"];
+    if (obj && typeof obj === "object") {
+      return obj.percentage || obj.growth || defaultVal;
+    }
+    return defaultVal;
+  };
+
+  const getMetricTrend = (key: string, defaultVal?: "up" | "down"): "up" | "down" | undefined => {
+    if (!dashboardData) return defaultVal;
+    const obj = dashboardData[key] ||
+      dashboardData[key.toLowerCase()] ||
+      dashboardData[key + "s"] ||
+      dashboardData[key.toLowerCase() + "s"] ||
+      dashboardData[key + "Now"] ||
+      dashboardData[key + "Signups"] ||
+      dashboardData[key + "Reports"] ||
+      dashboardData[key + "Count"];
+    if (obj && typeof obj === "object") {
+      if (obj.trend === "up" || obj.trend === "down") return obj.trend;
+      if (obj.isPositive === false) return "down";
+      if (obj.isPositive === true) return "up";
+    }
+    return defaultVal;
+  };
+
   const metrics: Metric[] = [
     {
       title: "Total users",
-      value: dashboardData?.user?.count,
-      trend: "up",
-      percentage: dashboardData?.user?.percentage,
+      value: getMetricValue("totalUsers", "0"),
+      trend: getMetricTrend("totalUsers", "up"),
+      percentage: getMetricPercentage("totalUsers"),
     },
     {
       title: "Online now",
-      value: "458",
+      value: getMetricValue("onlineNow", "0"),
+      trend: getMetricTrend("onlineNow"),
+      percentage: getMetricPercentage("onlineNow"),
     },
     {
       title: "DAU (24)",
-      value: "1,024",
-      trend: "down",
-      percentage: "1.3%",
+      value: getMetricValue("dau", "0"),
+      trend: getMetricTrend("dau", "down"),
+      percentage: getMetricPercentage("dau"),
     },
     {
       title: "Premium sign-ups",
-      value: "18",
-      trend: "up",
-      percentage: "0.5%",
+      value: getMetricValue("premiumSignUps", "0"),
+      trend: getMetricTrend("premiumSignUps", "up"),
+      percentage: getMetricPercentage("premiumSignUps"),
     },
     {
       title: "Open Reports",
-      value: "11",
-      trend: "down",
-      percentage: "5%",
+      value: getMetricValue("openReports", "0"),
+      trend: getMetricTrend("openReports", "down"),
+      percentage: getMetricPercentage("openReports"),
     },
   ];
 
@@ -154,9 +214,8 @@ export default function PhotoMetrics() {
 
             {item.trend && item.percentage && (
               <div
-                className={`flex items-center gap-1 text-sm font-medium ${
-                  item.trend === "up" ? "text-green-600" : "text-[#A50134]"
-                }`}
+                className={`flex items-center gap-1 text-sm font-medium ${item.trend === "up" ? "text-green-600" : "text-[#A50134]"
+                  }`}
               >
                 {item.trend === "up" ? <HiArrowUp /> : <HiArrowDown />}
                 {item.percentage}

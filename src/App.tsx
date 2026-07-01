@@ -35,6 +35,7 @@ import UserVerificationPage from "./pages/Users/UserVerificationPage";
 import Analytics from "./pages/Analytics/Analytics";
 import SubAdminManagement from "./pages/Admin/SubAdminManagement";
 import PaymentsPage from "./pages/Payments/PaymentsPage";
+import StickersPage from "./pages/Stickers/StickersPage";
 import { useEffect } from "react";
 import { useAppDispatch } from "./store/hooks";
 import { logout, setAuthSuccess } from "./store/auth.slice";
@@ -71,7 +72,7 @@ export default function App() {
             <Route element={<AppLayout />}>
               <Route path="/" index element={<Home />} />
 
-               {/* User Management */}
+               
               <Route element={<PermissionRoute permission="user_verifications" />}>
                 <Route path="/users" element={<AllUsersPage />} />
                 <Route path="/moderation" element={<ModerationPage />} />
@@ -106,6 +107,9 @@ export default function App() {
 
               {/* Payments */}
               <Route path="/payments/subscriptions" element={<PaymentsPage />} />
+
+              {/* Stickers */}
+              <Route path="/stickers" element={<StickersPage />} />
 
               {/* Others Page */}
               <Route path="/profile" element={<UserProfiles />} />

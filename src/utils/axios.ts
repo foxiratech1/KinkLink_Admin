@@ -36,6 +36,7 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
     const status = error?.response?.status;
+    const requestUrl = error?.config?.url || "";
 
     // Public routes (NO auto logout here)
     const publicRoutes = ["/signin", "/verify-otp", "/reset-password"];
@@ -44,14 +45,17 @@ axiosInstance.interceptors.response.use(
       window.location.pathname.includes(route)
     );
 
+    const isStickerRoute = requestUrl.includes("sticker") || window.location.pathname.includes("sticker");
+
     /**
      * Token expired / invalid
      * - Only logout if:
      *   1. Status is 401
      *   2. User is NOT on public route
-     *   3. Token actually exists
+     *   3. Request is NOT a sticker endpoint or page
+     *   4. Token actually exists
      */
-    if (status === 401 && !isPublicRoute) {
+    if (status === 401 && !isPublicRoute && !isStickerRoute) {
       const token = localStorage.getItem("token");
 
       if (token) {

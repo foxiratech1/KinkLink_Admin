@@ -99,6 +99,12 @@ const navItems: NavItem[] = [
     pro: false,
   },
   {
+    icon: <ShootingStarIcon />,
+    name: "Stickers",
+    path: "/stickers",
+    pro: false,
+  },
+  {
     icon: <PieChartIcon />,
     name: "Analytics",
     path: "/analytics",
