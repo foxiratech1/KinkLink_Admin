@@ -27,16 +27,21 @@ import {
   IoCopyOutline,
   IoCreateOutline
 } from "react-icons/io5";
-import { Payment, RefundRequest } from "../../types/payment.types";
+import { Payment } from "../../types/payment.types";
 import {
   getPaymentsApi,
-  getRefundRequestsApi,
-  updateRefundRequestApi,
   replyToUserByEmailApi,
-  simulateSubmitRefundRequestApi
 } from "../../api/paymentapi";
+import {
+  createPremiumPlanApi,
+  getPremiumPlansApi,
+  getRefundTicketsApi,
+  updateRefundTicketStatusApi,
+  simulateSubmitRefundTicketApi
+} from "../../api/subscriptionapi";
+import { PremiumPlan, RefundTicket } from "../../types/subscription.types";
 
-type TabType = "transactions" | "refunds";
+type TabType = "transactions" | "refunds" | "plans";
 
 export default function PaymentsComponent() {
   const [activeTab, setActiveTab] = useState<TabType>("transactions");
@@ -62,13 +67,34 @@ export default function PaymentsComponent() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   // Refund Tickets States
-  const [refundRequests, setRefundRequests] = useState<RefundRequest[]>([]);
-  const [selectedTicket, setSelectedTicket] = useState<RefundRequest | null>(null);
+  const [refundRequests, setRefundRequests] = useState<RefundTicket[]>([]);
+  const [selectedTicket, setSelectedTicket] = useState<RefundTicket | null>(null);
   const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
   const [internalNoteInput, setInternalNoteInput] = useState("");
   const [emailReplyInput, setEmailReplyInput] = useState("");
   const [isSendingEmail, setIsSendingEmail] = useState(false);
   const [isSavingNotes, setIsSavingNotes] = useState(false);
+  const [refundStatusFilter, setRefundStatusFilter] = useState<"All" | "Pending" | "Refunded" | "Declined">("All");
+
+  // Premium Plans States
+  const [plans, setPlans] = useState<PremiumPlan[]>([]);
+  const [plansLoading, setPlansLoading] = useState(false);
+  const [planSearch, setPlanSearch] = useState("");
+  const [planCategoryFilter, setPlanCategoryFilter] = useState<"All" | "Personal" | "Business">("All");
+  const [currentPlanPage, setCurrentPlanPage] = useState(1);
+  const [totalPlans, setTotalPlans] = useState(0);
+  const [totalPlanPages, setTotalPlanPages] = useState(1);
+  const planLimit = 6;
+
+  // Plan creation form states
+  const [isCreatePlanOpen, setIsCreatePlanOpen] = useState(false);
+  const [newPlanName, setNewPlanName] = useState("");
+  const [newPlanCategory, setNewPlanCategory] = useState("Personal");
+  const [newPlanPrice, setNewPlanPrice] = useState("9.99");
+  const [newPlanDuration, setNewPlanDuration] = useState("weekly");
+  const [newPlanFeatureInput, setNewPlanFeatureInput] = useState("");
+  const [newPlanFeatures, setNewPlanFeatures] = useState<string[]>(["Unlimited Likes", "Incognito Mode", "Profile Badge"]);
+  const [isSubmittingPlan, setIsSubmittingPlan] = useState(false);
 
   // Simulation Tool States
   const [isSimModalOpen, setIsSimModalOpen] = useState(false);
@@ -77,7 +103,7 @@ export default function PaymentsComponent() {
   const [simEmail, setSimEmail] = useState("tester@kinklink.app");
   const [simSubId, setSimSubId] = useState("sub_test999");
   const [simPayId, setSimPayId] = useState("ch_stripe_9999");
-  const [simReason, setSimReason] = useState<RefundRequest["reason"]>("Billing issue");
+  const [simReason, setSimReason] = useState<string>("Billing issue");
   const [simMessage, setSimMessage] = useState("");
 
   /* ===================== FETCH DATA FUNCTIONS ===================== */
@@ -109,28 +135,54 @@ export default function PaymentsComponent() {
     }
   }, [currentPayPage, searchQuery, statusFilter, methodFilter, itemTypeFilter, dateOption, startDate, endDate, activeTab]);
 
-  const fetchRefundRequests = useCallback(async () => {
+  const fetchRefundTickets = useCallback(async () => {
     if (activeTab !== "refunds") return;
     setLoading(true);
     try {
-      const response = await getRefundRequestsApi();
+      const response = await getRefundTicketsApi({
+        status: refundStatusFilter === "All" ? undefined : refundStatusFilter
+      });
       if (response.success) {
         setRefundRequests(response.data);
       }
     } catch (error: any) {
-      toast.error(error?.message || "Failed to load refund requests");
+      toast.error(error?.message || "Failed to load refund tickets");
     } finally {
       setLoading(false);
     }
-  }, [activeTab]);
+  }, [activeTab, refundStatusFilter]);
+
+  const fetchPlans = useCallback(async () => {
+    if (activeTab !== "plans") return;
+    setPlansLoading(true);
+    try {
+      const response = await getPremiumPlansApi({
+        page: currentPlanPage,
+        limit: planLimit,
+        category: planCategoryFilter === "All" ? undefined : planCategoryFilter,
+        search: planSearch || undefined
+      });
+      if (response.success) {
+        setPlans(response.data);
+        setTotalPlans(response.totalCount);
+        setTotalPlanPages(response.totalPages);
+      }
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to load premium plans");
+    } finally {
+      setPlansLoading(false);
+    }
+  }, [activeTab, currentPlanPage, planCategoryFilter, planSearch]);
 
   useEffect(() => {
     if (activeTab === "transactions") {
       fetchPayments();
-    } else {
-      fetchRefundRequests();
+    } else if (activeTab === "refunds") {
+      fetchRefundTickets();
+    } else if (activeTab === "plans") {
+      fetchPlans();
     }
-  }, [activeTab, fetchPayments, fetchRefundRequests]);
+  }, [activeTab, fetchPayments, fetchRefundTickets, fetchPlans]);
 
   /* ===================== HANDLERS ===================== */
 
@@ -140,14 +192,14 @@ export default function PaymentsComponent() {
     toast.success("Copied to clipboard!");
   };
 
-  // Trigger Payments Sidebar Drawer
+  // Row Details View
   const handleRowClick = (payment: Payment) => {
     setSelectedPayment(payment);
     setIsDrawerOpen(true);
   };
 
-  // Trigger Ticket Details Modal
-  const handleTicketClick = (ticket: RefundRequest) => {
+  // Ticket Details Modal view
+  const handleTicketClick = (ticket: RefundTicket) => {
     setSelectedTicket(ticket);
     setInternalNoteInput(ticket.internalNotes || "");
     setEmailReplyInput("");
@@ -159,12 +211,13 @@ export default function PaymentsComponent() {
     if (!selectedTicket) return;
     setIsSavingNotes(true);
     try {
-      const updated = await updateRefundRequestApi(selectedTicket._id, {
+      const updated = await updateRefundTicketStatusApi(selectedTicket._id, {
+        status: selectedTicket.status,
         internalNotes: internalNoteInput
       });
       setSelectedTicket(updated);
       toast.success("Internal notes updated successfully!");
-      fetchRefundRequests();
+      fetchRefundTickets();
     } catch (err: any) {
       toast.error(err.message || "Failed to update notes");
     } finally {
@@ -178,10 +231,10 @@ export default function PaymentsComponent() {
     setIsSendingEmail(true);
     try {
       const updated = await replyToUserByEmailApi(selectedTicket._id, emailReplyInput);
-      setSelectedTicket(updated);
+      setSelectedTicket(updated as any);
       setEmailReplyInput("");
       toast.success(`Email reply successfully queued and sent to ${updated.user.email}!`);
-      fetchRefundRequests();
+      fetchRefundTickets();
     } catch (err: any) {
       toast.error(err.message || "Failed to send email");
     } finally {
@@ -190,15 +243,16 @@ export default function PaymentsComponent() {
   };
 
   // Change Ticket Status
-  const handleChangeTicketStatus = async (newStatus: RefundRequest["status"]) => {
+  const handleChangeTicketStatus = async (newStatus: RefundTicket["status"]) => {
     if (!selectedTicket) return;
     try {
-      const updated = await updateRefundRequestApi(selectedTicket._id, {
-        status: newStatus
+      const updated = await updateRefundTicketStatusApi(selectedTicket._id, {
+        status: newStatus,
+        internalNotes: internalNoteInput
       });
       setSelectedTicket(updated);
       toast.success(`Ticket status marked as ${newStatus}`);
-      fetchRefundRequests();
+      fetchRefundTickets();
     } catch (err: any) {
       toast.error(err.message || "Failed to update ticket status");
     }
@@ -213,7 +267,7 @@ export default function PaymentsComponent() {
     }
 
     try {
-      await simulateSubmitRefundRequestApi({
+      await simulateSubmitRefundTicketApi({
         userId: simUserId,
         username: simUsername,
         email: simEmail,
@@ -228,7 +282,7 @@ export default function PaymentsComponent() {
       setSimMessage("");
       setSimPayId(`ch_stripe_${Math.floor(Math.random() * 100000)}`);
       // Refresh current list
-      fetchRefundRequests();
+      fetchRefundTickets();
       fetchPayments();
     } catch (err: any) {
       toast.error("Failed to simulate submission");
@@ -279,7 +333,8 @@ export default function PaymentsComponent() {
           <button
             onClick={() => {
               if (activeTab === "transactions") fetchPayments();
-              else fetchRefundRequests();
+              else if (activeTab === "refunds") fetchRefundTickets();
+              else if (activeTab === "plans") fetchPlans();
               toast.success("Data reloaded");
             }}
             className="p-2.5 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-full shadow-sm transition-all"
@@ -295,8 +350,8 @@ export default function PaymentsComponent() {
         <button
           onClick={() => setActiveTab("transactions")}
           className={`px-8 py-3 rounded-xl transition-all text-sm font-semibold ${activeTab === "transactions"
-              ? "bg-brand-500 text-white shadow-sm"
-              : "text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
+            ? "bg-brand-500 text-white shadow-sm"
+            : "text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
             }`}
         >
           Payments History
@@ -304,11 +359,20 @@ export default function PaymentsComponent() {
         <button
           onClick={() => setActiveTab("refunds")}
           className={`px-8 py-3 rounded-xl transition-all text-sm font-semibold ${activeTab === "refunds"
-              ? "bg-brand-500 text-white shadow-sm"
-              : "text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
+            ? "bg-brand-500 text-white shadow-sm"
+            : "text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
             }`}
         >
           Billing & Refund Tickets
+        </button>
+        <button
+          onClick={() => setActiveTab("plans")}
+          className={`px-8 py-3 rounded-xl transition-all text-sm font-semibold ${activeTab === "plans"
+            ? "bg-brand-500 text-white shadow-sm"
+            : "text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
+            }`}
+        >
+          Premium Plans
         </button>
       </div>
 
@@ -595,6 +659,31 @@ export default function PaymentsComponent() {
       {activeTab === "refunds" && (
         <div className="space-y-6">
 
+          {/* Refund Ticket Filters */}
+          <div className="bg-white dark:bg-gray-900 p-6 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm space-y-4">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+              Filter Tickets
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="relative">
+                <select
+                  value={refundStatusFilter}
+                  onChange={(e) => {
+                    setRefundStatusFilter(e.target.value as any);
+                  }}
+                  className="w-full pl-3 pr-8 py-2.5 bg-gray-50 dark:bg-gray-800/50 border border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 text-sm text-gray-700 dark:text-gray-200 appearance-none cursor-pointer"
+                >
+                  <option value="All">All Tickets</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Refunded">Refunded</option>
+                  <option value="Declined">Declined</option>
+                </select>
+                <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                  <IoChevronDownOutline />
+                </div>
+              </div>
+            </div>
+          </div>
 
           <div className="bg-white dark:bg-gray-900 rounded-[32px] shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden pb-4 min-h-[400px]">
 
@@ -716,6 +805,154 @@ export default function PaymentsComponent() {
               </div>
             )}
           </div>
+        </div>
+      )}
+
+      {/* ==========================================
+         TAB 3: PREMIUM PLANS
+         ========================================== */}
+      {activeTab === "plans" && (
+        <div className="space-y-6 animate-fade-in">
+          {/* Plans Header & Filter Bar */}
+          <div className="bg-white dark:bg-gray-900 p-6 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="flex flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* Search */}
+              <div className="relative">
+                <IoSearchOutline className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 text-lg" />
+                <input
+                  type="text"
+                  placeholder="Search plan name or feature..."
+                  value={planSearch}
+                  onChange={(e) => {
+                    setPlanSearch(e.target.value);
+                    setCurrentPlanPage(1);
+                  }}
+                  className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800/50 border border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 text-sm text-gray-800 dark:text-white"
+                />
+              </div>
+
+              {/* Category Filter */}
+              <div className="relative">
+                <select
+                  value={planCategoryFilter}
+                  onChange={(e) => {
+                    setPlanCategoryFilter(e.target.value as any);
+                    setCurrentPlanPage(1);
+                  }}
+                  className="w-full pl-3 pr-8 py-2.5 bg-gray-50 dark:bg-gray-800/50 border border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 text-sm text-gray-700 dark:text-gray-200 appearance-none cursor-pointer"
+                >
+                  <option value="All">All Categories</option>
+                  <option value="Personal">Personal</option>
+                  <option value="Business">Business</option>
+                </select>
+                <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                  <IoChevronDownOutline />
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setIsCreatePlanOpen(true)}
+              className="flex items-center justify-center gap-2 px-6 py-2.5 bg-brand-500 hover:bg-brand-600 text-white rounded-xl shadow-sm text-sm font-semibold transition-all duration-150"
+            >
+              <IoCreateOutline className="text-lg" />
+              Create Premium Plan
+            </button>
+          </div>
+
+          {/* Grid of Plans */}
+          {plansLoading ? (
+            <div className="flex flex-col justify-center items-center py-32 space-y-4">
+              <div className="h-10 w-10 animate-spin rounded-full border-4 border-brand-500 border-t-transparent"></div>
+              <span className="italic text-gray-400 dark:text-gray-500 text-sm">Loading premium plans...</span>
+            </div>
+          ) : plans.length === 0 ? (
+            <div className="bg-white dark:bg-gray-900 rounded-[32px] shadow-sm border border-gray-100 dark:border-gray-800 py-32 text-center animate-fade-in">
+              <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-full w-fit mx-auto mb-4">
+                <IoBookOutline className="text-5xl text-gray-300 dark:text-gray-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300">
+                No Premium Plans Found
+              </h3>
+              <p className="text-gray-400 dark:text-gray-500 text-sm max-w-xs mx-auto mt-1">
+                There are no premium subscription plans matching your search or category filter.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
+              {plans.map((plan) => (
+                <div
+                  key={plan._id}
+                  className="bg-white dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800/80 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 p-6 flex flex-col justify-between overflow-hidden relative group"
+                >
+                  <div className="absolute -right-16 -top-16 w-36 h-36 rounded-full bg-brand-500/5 group-hover:bg-brand-500/10 transition-colors duration-300"></div>
+
+                  <div className="space-y-4 relative">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-brand-50 dark:bg-brand-950 text-brand-600 dark:text-brand-400 font-mono">
+                          {plan.category}
+                        </span>
+                        <h4 className="text-xl font-bold text-gray-900 dark:text-white mt-2">
+                          {plan.name}
+                        </h4>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-2xl font-black text-gray-900 dark:text-white">
+                          ${plan.price.toFixed(2)}
+                        </div>
+                        <span className="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-widest font-semibold block mt-0.5">
+                          / {plan.duration}
+                        </span>
+                      </div>
+                    </div>
+
+                    <hr className="border-gray-100 dark:border-gray-800" />
+
+                    <div className="space-y-2">
+                      <h5 className="text-xs font-bold text-gray-450 dark:text-gray-500 uppercase tracking-wider">
+                        Features Included
+                      </h5>
+                      {plan.features && plan.features.length > 0 ? (
+                        <ul className="space-y-2">
+                          {plan.features.map((feat, index) => (
+                            <li key={index} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                              <IoCheckmarkCircleOutline className="text-green-500 text-base flex-shrink-0" />
+                              <span>{feat}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <span className="text-sm italic text-gray-405 dark:text-gray-500 block">
+                          No features specified
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="mt-6 pt-4 border-t border-gray-100 dark:border-gray-800 flex justify-between items-center text-xs text-gray-400 dark:text-gray-500">
+                    <span>ID: {plan._id.substring(0, 15)}...</span>
+                    {plan.createdAt && (
+                      <span>Created: {new Date(plan.createdAt).toLocaleDateString()}</span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Plans Pagination */}
+          {!plansLoading && plans.length > 0 && (
+            <div className="mt-6">
+              <Pagination
+                currentPage={currentPlanPage}
+                totalPages={totalPlanPages}
+                onPageChange={setCurrentPlanPage}
+                totalItems={totalPlans}
+                itemsPerPage={planLimit}
+              />
+            </div>
+          )}
         </div>
       )}
 
@@ -999,8 +1236,8 @@ export default function PaymentsComponent() {
                     <button
                       onClick={() => handleChangeTicketStatus("Refunded")}
                       className={`flex-1 py-2 text-xs rounded-lg font-bold border transition-all ${selectedTicket.status === "Refunded"
-                          ? "bg-emerald-500 border-emerald-500 text-white"
-                          : "border-gray-200 dark:border-gray-700 text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800"
+                        ? "bg-emerald-500 border-emerald-500 text-white"
+                        : "border-gray-200 dark:border-gray-700 text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800"
                         }`}
                     >
                       Mark Refunded
@@ -1008,8 +1245,8 @@ export default function PaymentsComponent() {
                     <button
                       onClick={() => handleChangeTicketStatus("Closed")}
                       className={`flex-1 py-2 text-xs rounded-lg font-bold border transition-all ${selectedTicket.status === "Closed"
-                          ? "bg-gray-600 border-gray-600 text-white"
-                          : "border-gray-200 dark:border-gray-700 text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800"
+                        ? "bg-gray-600 border-gray-600 text-white"
+                        : "border-gray-200 dark:border-gray-700 text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800"
                         }`}
                     >
                       Mark Closed
@@ -1017,8 +1254,8 @@ export default function PaymentsComponent() {
                     <button
                       onClick={() => handleChangeTicketStatus("Pending")}
                       className={`flex-1 py-2 text-xs rounded-lg font-bold border transition-all ${selectedTicket.status === "Pending"
-                          ? "bg-amber-500 border-amber-500 text-white"
-                          : "border-gray-200 dark:border-gray-700 text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800"
+                        ? "bg-amber-500 border-amber-500 text-white"
+                        : "border-gray-200 dark:border-gray-700 text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800"
                         }`}
                     >
                       Set Pending
@@ -1278,6 +1515,204 @@ export default function PaymentsComponent() {
             </button>
           </div>
         </form>
+      </Modal>
+
+      {/* ==========================================
+         CREATE PREMIUM PLAN MODAL
+         ========================================== */}
+      <Modal
+        isOpen={isCreatePlanOpen}
+        onClose={() => setIsCreatePlanOpen(false)}
+        className="max-w-lg"
+      >
+        <div className="p-6 md:p-8 space-y-6">
+          <div className="border-b border-gray-100 dark:border-gray-800 pb-4 mt-4">
+            <h2 className="text-2xl font-black text-gray-900 dark:text-white flex items-center gap-2">
+              <IoCreateOutline className="text-2xl text-brand-500" />
+              Create Premium Plan
+            </h2>
+            <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
+              Add a new subscription tier with specific feature privileges.
+            </p>
+          </div>
+
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              if (!newPlanName.trim()) {
+                toast.error("Plan name is required");
+                return;
+              }
+              const priceNum = parseFloat(newPlanPrice);
+              if (isNaN(priceNum) || priceNum < 0) {
+                toast.error("Invalid plan price");
+                return;
+              }
+
+              setIsSubmittingPlan(true);
+              try {
+                await createPremiumPlanApi({
+                  name: newPlanName,
+                  category: newPlanCategory,
+                  price: priceNum,
+                  duration: newPlanDuration,
+                  features: newPlanFeatures
+                });
+                toast.success(`Premium plan "${newPlanName}" created successfully!`);
+                setIsCreatePlanOpen(false);
+                // Reset form
+                setNewPlanName("");
+                setNewPlanCategory("Personal");
+                setNewPlanPrice("9.99");
+                setNewPlanDuration("weekly");
+                setNewPlanFeatures(["Unlimited Likes", "Incognito Mode", "Profile Badge"]);
+                setNewPlanFeatureInput("");
+                // Fetch list again
+                fetchPlans();
+              } catch (err: any) {
+                toast.error(err.message || "Failed to create plan");
+              } finally {
+                setIsSubmittingPlan(false);
+              }
+            }}
+            className="space-y-5"
+          >
+            {/* Plan Name */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                Plan Name
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. Gold Weekly, Diamond Monthly"
+                value={newPlanName}
+                onChange={(e) => setNewPlanName(e.target.value)}
+                className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 text-sm text-gray-800 dark:text-white"
+                required
+              />
+            </div>
+
+            {/* Category and Price Grid */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                  Category
+                </label>
+                <select
+                  value={newPlanCategory}
+                  onChange={(e) => setNewPlanCategory(e.target.value)}
+                  className="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 text-sm text-gray-700 dark:text-gray-200"
+                >
+                  <option value="Personal">Personal</option>
+                  <option value="Business">Business</option>
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                  Price ($)
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  placeholder="9.99"
+                  value={newPlanPrice}
+                  onChange={(e) => setNewPlanPrice(e.target.value)}
+                  className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 text-sm text-gray-800 dark:text-white"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Duration */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                Duration
+              </label>
+              <select
+                value={newPlanDuration}
+                onChange={(e) => setNewPlanDuration(e.target.value)}
+                className="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 text-sm text-gray-700 dark:text-gray-200"
+              >
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+                <option value="6months">6 Months</option>
+                <option value="yearly">Yearly</option>
+              </select>
+            </div>
+
+            {/* Features Added */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 block font-mono">
+                Features Included
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="e.g. Incognito Mode"
+                  value={newPlanFeatureInput}
+                  onChange={(e) => setNewPlanFeatureInput(e.target.value)}
+                  className="flex-1 px-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 text-sm text-gray-800 dark:text-white"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (newPlanFeatureInput.trim()) {
+                      setNewPlanFeatures([...newPlanFeatures, newPlanFeatureInput.trim()]);
+                      setNewPlanFeatureInput("");
+                    }
+                  }}
+                  className="px-4 py-2 bg-gray-100 hover:bg-gray-250 text-gray-700 dark:bg-gray-800 dark:hover:bg-gray-750 dark:text-gray-200 rounded-xl text-sm font-semibold transition-all"
+                >
+                  Add
+                </button>
+              </div>
+
+              {/* Badges of current features */}
+              <div className="flex flex-wrap gap-2 mt-2">
+                {newPlanFeatures.map((feat, idx) => (
+                  <span
+                    key={idx}
+                    className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-brand-50/50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400 border border-brand-200/30"
+                  >
+                    {feat}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setNewPlanFeatures(newPlanFeatures.filter((_, i) => i !== idx));
+                      }}
+                      className="text-brand-500 hover:text-brand-700 font-bold ml-1"
+                    >
+                      &times;
+                    </button>
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex justify-end gap-3 pt-4 border-t border-gray-100 dark:border-gray-800">
+              <button
+                type="button"
+                onClick={() => setIsCreatePlanOpen(false)}
+                className="px-5 py-2.5 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl text-sm font-semibold transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmittingPlan}
+                className="px-6 py-2.5 bg-brand-500 hover:bg-brand-600 text-white disabled:opacity-50 rounded-xl text-sm font-semibold transition-all shadow-sm flex items-center gap-2"
+              >
+                {isSubmittingPlan && (
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                )}
+                Create Plan
+              </button>
+            </div>
+          </form>
+        </div>
       </Modal>
 
     </div>
