@@ -24,6 +24,7 @@ export type User = {
     profileImg?: string;
   };
   adminNote?: string;
+  isTrustedByKinkLink?: boolean;
 };
 
 // Response type for GET /api/admin/users
@@ -75,6 +76,7 @@ export type UserDetail = {
   updatedAt: string;
   __v: number;
   adminNote?: string;
+  isTrustedByKinkLink?: boolean;
 };
 
 // Person profile types
@@ -140,6 +142,7 @@ export type BusinessDetails = {
   createdAt: string;
   updatedAt: string;
   __v: number;
+  isTrustedByKinkLink?: boolean;
 };
 
 // API Response type for get-user-details endpoint

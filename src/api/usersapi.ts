@@ -237,3 +237,16 @@ export const getTargetUserReportApi = async (
   return res.data;
 };
 
+// TOGGLE KINKLINK TRUSTED BUSINESS BADGE
+export const toggleKinkLinkTrustedBusinessApi = async (
+  id: string,
+  isTrustedByKinkLink: boolean,
+): Promise<UserActionResponse> => {
+  const res = await axiosInstance.patch<UserActionResponse>(
+    API_ROUTES.USERS.TRUSTED_BUSINESS(id),
+    { isTrustedByKinkLink },
+  );
+  return res.data;
+};
+
+

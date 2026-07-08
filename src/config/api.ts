@@ -31,6 +31,7 @@ export const API_ROUTES = {
     TAKE_REPORT_ACTION: "/api/report/report/take-action",
     GET_REPORT_USER_DETAIL: (id: string) => `api/report/report-user-detail/${id}`,
     GET_TARGET_USER_REPORT: (id: string) => `api/report/target-user-report/${id}`,
+    TRUSTED_BUSINESS: (id: string) => `api/admin/kinklink-truested-business/${id}`,
   },
   INTERESTS: {
     ADD: "api/admin/interest",
