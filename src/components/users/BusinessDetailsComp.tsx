@@ -39,7 +39,9 @@ const BusinessDetailsComp = ({
   const [imageModal, setImageModal] = useState<string | null>(null);
 
   const IMAGE_URL = import.meta.env.VITE_API_BASE_URL;
-  const isTrusted = !!(businessProfile?.isTrustedByKinkLink || user?.isTrustedByKinkLink);
+  const isTrusted = !!(
+    businessProfile?.isTrustedByKinkLink || user?.isTrustedByKinkLink
+  );
 
   const handleAdminRequestUserId = async () => {
     if (!verification?._id) {
@@ -216,12 +218,13 @@ const BusinessDetailsComp = ({
       toast.success(
         nextTrustedStatus
           ? "Business added to KinkLink Recommends successfully!"
-          : "Business removed from KinkLink Recommends successfully!"
+          : "Business removed from KinkLink Recommends successfully!",
       );
       onUpdate();
     } catch (error: any) {
       toast.error(
-        error?.response?.data?.message || "Failed to update KinkLink Recommends status"
+        error?.response?.data?.message ||
+        "Failed to update KinkLink Recommends status",
       );
     } finally {
       setLoading(false);
@@ -273,22 +276,34 @@ const BusinessDetailsComp = ({
             <button
               onClick={handleToggleTrustedBusiness}
               disabled={loading}
-              className={`flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-300 ${
-                isTrusted
-                  ? "text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/30 hover:bg-rose-100 dark:hover:bg-rose-950/50 border border-rose-200 dark:border-rose-900/50"
-                  : "text-amber-900 dark:text-amber-100 bg-gradient-to-r from-amber-100 to-yellow-100 dark:from-amber-950/40 dark:to-yellow-950/40 hover:from-amber-200 hover:to-yellow-200 dark:hover:from-amber-950/60 dark:hover:to-yellow-950/60 border border-amber-300/50 dark:border-amber-700/50 shadow-sm"
-              }`}
+              className={`flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-300 ${isTrusted
+                ? "text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/30 hover:bg-rose-100 dark:hover:bg-rose-950/50 border border-rose-200 dark:border-rose-900/50"
+                : "text-amber-900 dark:text-amber-100 bg-gradient-to-r from-amber-100 to-yellow-100 dark:from-amber-950/40 dark:to-yellow-950/40 hover:from-amber-200 hover:to-yellow-200 dark:hover:from-amber-950/60 dark:hover:to-yellow-950/60 border border-amber-300/50 dark:border-amber-700/50 shadow-sm"
+                }`}
             >
               {isTrusted ? (
                 <>
-                  <svg className="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <svg
+                    className="w-4 h-4 text-rose-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
                   </svg>
                   Remove Recommendation
                 </>
               ) : (
                 <>
-                  <svg className="w-4 h-4 text-amber-500 fill-current animate-pulse" viewBox="0 0 20 20">
+                  <svg
+                    className="w-4 h-4 text-amber-500 fill-current animate-pulse"
+                    viewBox="0 0 20 20"
+                  >
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                   </svg>
                   Recommend Business
@@ -298,11 +313,10 @@ const BusinessDetailsComp = ({
             <button
               onClick={handleBlockToggle}
               disabled={loading}
-              className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                user.isBlocked
-                  ? "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 hover:bg-emerald-100 dark:hover:bg-emerald-950/50"
-                  : "text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 hover:bg-amber-100 dark:hover:bg-amber-950/50"
-              }`}
+              className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${user.isBlocked
+                ? "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 hover:bg-emerald-100 dark:hover:bg-emerald-950/50"
+                : "text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 hover:bg-amber-100 dark:hover:bg-amber-950/50"
+                }`}
             >
               {user.isBlocked ? "Unblock Business" : "Block Business"}
             </button>
@@ -319,7 +333,10 @@ const BusinessDetailsComp = ({
             <div className="flex items-center gap-2">
               {isTrusted && (
                 <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold text-amber-800 dark:text-amber-200 bg-gradient-to-r from-amber-100 to-yellow-100 dark:from-amber-950/40 dark:to-yellow-950/40 border border-amber-200 dark:border-amber-900/50 shadow-sm animate-pulse">
-                  <svg className="w-3.5 h-3.5 text-amber-500 fill-current" viewBox="0 0 20 20">
+                  <svg
+                    className="w-3.5 h-3.5 text-amber-500 fill-current"
+                    viewBox="0 0 20 20"
+                  >
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                   </svg>
                   KinkLink Recommends
@@ -416,11 +433,10 @@ const BusinessDetailsComp = ({
                     </span>
                     <div>
                       <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          businessProfile?.userSentiment === "Active"
-                            ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                            : "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                        }`}
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${businessProfile?.userSentiment === "Active"
+                          ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                          : "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                          }`}
                       >
                         {businessProfile?.userSentiment || "N/A"}
                       </span>

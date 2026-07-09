@@ -1625,22 +1625,23 @@ export default function PaymentsComponent() {
               </div>
             </div>
 
-            {/* Duration */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                Duration
-              </label>
-              <select
-                value={newPlanDuration}
-                onChange={(e) => setNewPlanDuration(e.target.value)}
-                className="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 text-sm text-gray-700 dark:text-gray-200"
-              >
-                <option value="weekly">Weekly</option>
-                <option value="monthly">Monthly</option>
-                <option value="6months">6 Months</option>
-                <option value="yearly">Yearly</option>
-              </select>
-            </div>
+            {newPlanCategory !== "Business" && (
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                  Duration
+                </label>
+                <select
+                  value={newPlanDuration}
+                  onChange={(e) => setNewPlanDuration(e.target.value)}
+                  className="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 text-sm text-gray-700 dark:text-gray-200"
+                >
+                  <option value="weekly">Weekly</option>
+                  <option value="monthly">Monthly</option>
+                  <option value="6months">6 Months</option>
+                  <option value="yearly">Yearly</option>
+                </select>
+              </div>
+            )}
 
             {/* Features Added */}
             <div className="space-y-2">

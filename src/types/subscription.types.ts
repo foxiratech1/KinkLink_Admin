@@ -3,7 +3,9 @@ export interface PremiumPlan {
   name: string;
   category: string;
   price: number;
-  duration: string; // "weekly", "monthly", "yearly", etc.
+  duration: string;
+  eventsLimit?: number;
+  groupsLimit?: number;
   features?: string[];
   createdAt?: string;
 }
@@ -13,6 +15,8 @@ export interface CreatePlanPayload {
   category: string;
   price: number;
   duration: string;
+  eventsLimit?: number;
+  groupsLimit?: number;
   features?: string[];
 }
 
